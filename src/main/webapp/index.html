@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+    <title>Json Project</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="description" content="Json Project for test jquery"/>
+    <meta name="keywords" content="jquery, json, javascript"/>
+    <meta name="author" content="Created by UNDEAD"/>
+
+    <link href='css/style.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='css/easy-responsive-tabs.css' media='screen' rel='stylesheet' type='text/css'/>
+
+    <script type="text/javascript" src="lib/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="lib/underscore.js"></script>
+    <script type="text/javascript" src="lib/backbone.js"></script>
+    <script type="text/javascript" src="lib/handlebars.js"></script>
+    <script type="text/javascript" src="lib/easyResponsiveTabs.js"></script>
+
+</head>
+
+<body>
+
+
+<div id='header'>
+    <div class="swagger-ui-wrap">
+        <a id="logo" href="#">RESTfulWebService</a>
+
+        <form id='api_selector'>
+            <div class='input'>
+                <input id="input_baseUrl"
+                       placeholder="http://example.com/api"
+                       name="baseUrl"
+                       value="http://localhost:8080/RESTfulWebService/api"
+                       type="text"/>
+            </div>
+            <div class='input'>
+                <input id="input_apiKey"
+                       placeholder="api_key"
+                       name="apiKey"
+                       type="text"/>
+            </div>
+            <div class='input'>
+                <input id="explore" type="submit" value="Explore">
+                <!--<a id="explore" href="#">Explore</a>-->
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div id="message-bar" class="swagger-ui-wrap">
+    &nbsp;
+</div>
+
+<div id="ui-container" class="swagger-ui-wrap">
+
+    <!--<div id="verticalTab">-->
+        <!--<ul class="resp-tabs-list">-->
+            <!--<li>Responsive Tab 1</li>-->
+            <!--<li>Responsive Tab 2</li>-->
+            <!--<li>Responsive Tab 3</li>-->
+            <!--<li>Long name Responsive Tab 4</li>-->
+        <!--</ul>-->
+        <!--<div class="resp-tabs-container">-->
+            <!--<div>-->
+                <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum nibh urna,-->
+                    <!--euismod ut ornare non, volutpat vel tortor. Integer laoreet placerat suscipit.-->
+                    <!--Sed sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat,-->
+                    <!--gravida a facilisis quis, ornare id lectus. Proin consectetur nibh quis urna-->
+                    <!--gravida mollis.</p>-->
+            <!--</div>-->
+            <!--<div>-->
+                <!--<p>This tab has icon in it.</p>-->
+            <!--</div>-->
+            <!--<div>-->
+                <!--<p>Suspendisse blandit velit Integer laoreet placerat suscipit. Sed sodales-->
+                    <!--scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a-->
+                    <!--facilisis quis, ornare id lectus. Proin consectetur nibh quis Integer laoreet-->
+                    <!--placerat suscipit. Sed sodales scelerisque commodo. Nam porta cursus lectus.-->
+                    <!--Proin nunc erat, gravida a facilisis quis, ornare id lectus. Proin consectetur-->
+                    <!--nibh quis urna gravid urna gravid eget erat suscipit in malesuada odio-->
+                    <!--venenatis.</p>-->
+            <!--</div>-->
+            <!--<div>-->
+                <!--<p>d ut ornare non, volutpat vel tortor. Integer laoreet placerat suscipit. Sed-->
+                    <!--sodales scelerisque commodo. Nam porta cursus lectus. Proin nunc erat, gravida a-->
+                    <!--facilisis quis, ornare id lectus. Proin consectetur nibh quis urna gravida-->
+                    <!--mollis.Suspendisse blandit velit eget erat suscipit in malesuada odio-->
+                    <!--venenatis.</p>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <script id="headerTempl" type="text/template">
+        <button class="new">{{ apiVersion }}</button>
+    </script>
+
+    <script id="headerTempl1" type="text/template">
+        <button class="new">New Wine</button>
+    </script>
+
+    <script src="js/utils.js"></script>
+    <script src="js/helper.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/collections.js"></script>
+    <script src="js/main.js"></script>
+
+
+
+
+</body>
+
+</html>

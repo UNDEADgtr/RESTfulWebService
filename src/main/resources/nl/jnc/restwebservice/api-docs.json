@@ -1,0 +1,15 @@
+{
+    "apiVersion": "0.2",
+    "swaggerVersion": "1.1",
+    "basePath": "http://localhost:8080/RESTfulWebService/api",
+    "apis": [
+        {
+            "path": "/user",
+            "description": ""
+        },
+        {
+            "path": "/pet",
+            "description": ""
+        }
+    ]
+}
