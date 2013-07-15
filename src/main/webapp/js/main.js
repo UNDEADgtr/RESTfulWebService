@@ -28,7 +28,7 @@ var AppRouter = Backbone.Router.extend({
     list: function () {
 
 
-        this.before();
+        //this.before();
     },
 
     newWine: function () {
@@ -49,7 +49,7 @@ var AppRouter = Backbone.Router.extend({
         if (this.wineList) {
             if (callback) callback();
         } else {
-            this.wineList = new App.Collections.WineCollection();
+            //this.wineList = new App.Collections.WineCollection();
 //       		this.wineList.fetch({success: function() {
 //               $('#sidebar').html( new WineListView({model: app.wineList}).render().el );
 //               if (callback) callback();

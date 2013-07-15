@@ -4,7 +4,7 @@
     "resourcePath": "/user",
     "apis": [
     {
-        "path": "/user.{format}/createWithArray",
+        "path": "/user.json/createWithArray",
         "description": "Operations about user",
         "operations": [
             {
@@ -25,7 +25,7 @@
         ]
     },
     {
-        "path": "/user.{format}",
+        "path": "/user.json",
         "description": "Operations about user",
         "operations": [
             {
@@ -47,7 +47,7 @@
         ]
     },
     {
-        "path": "/user.{format}/createWithList",
+        "path": "/user.json/createWithList",
         "description": "Operations about user",
         "operations": [
             {
@@ -68,7 +68,7 @@
         ]
     },
     {
-        "path": "/user.{format}/{username}",
+        "path": "/user.json/{username}",
         "description": "Operations about user",
         "operations": [
             {
@@ -100,7 +100,7 @@
         ]
     },
     {
-        "path": "/user.{format}/login",
+        "path": "/user.json/login",
         "description": "Operations about user",
         "operations": [
             {
@@ -136,7 +136,7 @@
         ]
     },
     {
-        "path": "/user.{format}/logout",
+        "path": "/user.json/logout",
         "description": "Operations about user",
         "operations": [
             {

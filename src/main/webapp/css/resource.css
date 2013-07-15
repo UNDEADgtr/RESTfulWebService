@@ -1,0 +1,10 @@
+
+body div#ui-container div#resources div.options {
+    font-size: 0.7em;
+    text-align: right;
+
+}
+
+body div#ui-container div#resources div.raw {
+    display: none;
+}

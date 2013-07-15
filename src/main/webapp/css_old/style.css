@@ -737,10 +737,6 @@ body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operatio
     overflow-y: auto;
 }
 
-/*---------------------------------------------     POST    ----------------------------------------------------------------------------------*/
-
-
-
 body ul#resources li.resource ul.endpoints li.endpoint ul.operations li.operation.post {
     float: none;
     clear: both;
@@ -1737,7 +1733,7 @@ pre code {
     padding: 15px 0 5px;
 }
 
-.ui-wrap {
+.swagger-ui-wrap {
     max-width: 960px;
     margin-left: auto;
     margin-right: auto;

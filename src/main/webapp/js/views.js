@@ -54,7 +54,7 @@ App.Views.ApiDoc = Backbone.View.extend({
             App.Apis.add(model)
             App.Apis.modelView.push(view)
         });
-        console.log(App.Apis.modelView)
+        //console.log(App.Apis.modelView)
     }
 });
 
@@ -65,12 +65,12 @@ App.Views.Api = Backbone.View.extend({
             success: this.render
         });
     },
-    resourcePath: '',
-    content: '',
+    //resourcePath: '',
+    //content: '',
     render: function () {
 
-        this.resourcePath = tpl.getResourcePath(this.model.toJSON());
-        this.content = tpl.getContent(this.model.toJSON());
+        //this.resourcePath = tpl.getResourcePath(this.model.toJSON());
+        //this.content = tpl.getContent(this.model.toJSON());
 
 
         App.Apis.count--;
@@ -85,143 +85,140 @@ App.Views.Api = Backbone.View.extend({
 });
 
 App.Views.UIContainer = Backbone.View.extend({
-    initialize: function () {
-        //this.collection.on('add', this.addOne, this);
-        //this.render();
-    },
-
     tagName: 'div',
-
-//    render: function () {
-//        this.$el.empty();
-//        this.collection.each(this.addOne, this);
-//        console.log(this.el);
-//        return this;
-//    },
-//    addOne: function (task) {
-//
-//        console.log(task.toJSON())
-//        var taskView = new App.Views.Task({ model: task });
-//
-//        this.$el.append(taskView.render().el);
-//    }
-
     render: function () {
+        var buffer;
+        buffer = '<div id="tabs"><ul>';
+        this.collection.each(function (api) {
+            var resourcePath = new App.Views.ResourcePath({model : api})
+            buffer += resourcePath.render().el.innerHTML;
+        });
+        buffer += '</ul>';
+        this.collection.each(function (api) {
+            var apiView = new App.Views.ApiContent({model : api})
+            buffer += apiView.render().el.innerHTML;
+        });
+        buffer += '</div>';
+        console.log(buffer);
+        $('#ui-container').empty();
+        $('#ui-container').append(buffer);
 
-        console.log('UIContainer');
+        tpl.buildResources('tabs')
+        tpl.buildOperations('accordion-api');
+        $('#ui-container').append(tpl.getFooter(App.ApiDoc.toJSON()));
+        return this;
+    }
+});
+
+App.Views.ResourcePath = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        $(this.el).html(tpl.getResourcePath(this.model.toJSON()));
+        return this;
+    }
+});
+
+App.Views.ApiContent = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var apiAccordion = new App.Views.ApiAccordion({model : this.model});
+        var mJson = this.model.toJSON();
+        mJson.AccContent = apiAccordion.render().el.innerHTML
+        console.log(mJson)
+        var cont = $(tpl.getContent(mJson));
+        console.log(cont)
+
+        $(this.el).html(cont);
+        console.log(this.el)
+        return this;
+    }
+});
+
+App.Views.ApiAccordion = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
 
         var buffer;
 
-        buffer = '<div id="verticalTab">';
+        buffer = '<div class="accordion-api">';
 
-        buffer += '<ul class="resp-tabs-list">';
+        this.model.get('apis').forEach(function(api){
+            buffer += '<h3>';
 
-        this.collection.modelView.forEach(function (api) {
-            buffer += api.resourcePath;
-        });
+            console.log(tpl.getHeading(api));
 
-        buffer += '</ul>';
 
-        buffer += '<div class="resp-tabs-container">';
+            buffer += tpl.getHeading(api) ;
+            buffer += '</h3>';
 
-        this.collection.modelView.forEach(function (api) {
-            buffer += api.content;
+            buffer += '<div><p>';
+            var accordionContent = new App.Views.AccordionContent({model : api});
+            buffer += accordionContent.render().el.outerHTML;
+            buffer += '</p></div>';
+
         });
 
         buffer += '</div>';
 
-
-        buffer += '';
-        buffer += '';
-
-
-        //this.collection.each(this.addOne, this);
         console.log(buffer);
+        $(this.el).html(buffer);
 
-        $('#ui-container').empty();
-        $('#ui-container').append(buffer);
-
-        tpl.buildTab()
         return this;
     }
 });
 
 
-App.Views.UIContainer123 = Backbone.View.extend({
-
-    initialize: function () {
-        //this.collection.on('add', this.addOne, this);
-        this.render();
-    },
-
+App.Views.AccordionContent = Backbone.View.extend({
     tagName: 'div',
-
     render: function () {
-        this.$el.empty();
-        this.collection.each(this.addOne, this);
-        console.log(this.el);
-        return this;
-    },
-    addOne: function (task) {
 
-        console.log(task.toJSON())
-        var taskView = new App.Views.Task({ model: task });
+        console.log(this.model)
 
-        this.$el.append(taskView.render().el);
-    }
+//        "path": "/user.json",
+//            "description": "Operations about user",
+//            "operations": [
+//            {
+//                "httpMethod": "POST",
+//                "summary": "Create user",
+//                "notes": "This can only be done by the logged in user.",
+//                "responseClass": "void",
+//                "nickname": "createUser",
+//                "parameters": [
+//                    {
+//                        "description": "Created user object",
+//                        "paramType": "body",
+//                        "required": true,
+//                        "allowMultiple": false,
+//                        "dataType": "User"
+//                    }
+//                ]
+//            }
+//        ]
 
-//    render: function () {
-//        this.collection = App.Apis;
-//        this.$el.append(this.getVerticalTab());
-//        return this;
-//    },
-//    getVerticalTab: function () {
-//        console.log('getVerticalTab');
-//
+
 //        var buffer;
 //
-//        buffer = '<div id="verticalTab">';
 //
-//        buffer += '<ul class="resp-tabs-list">';
+//        this.model.get('apis').forEach(function(api){
+//            buffer += '<h3>';
+//            buffer += api.path;
+//            buffer += '</h3>';
 //
-//        this.collection.each(function(api1){
-//            api1.fetch()
-//            console.log(api1);
-//            console.log(api1.resourcePath);
-//            console.log(api1.get('resourcePath'));
+//            buffer += '<div><p>';
+//            buffer += api.path;
+//            buffer += '</p></div>';
+//
 //        });
-//
-//        var days = this.collection.map(function(model){
-//            return model.get('apiVersion');
-//        });
-//
-//        App.Apis.models.forEach(function (api) {
-//            buffer += '<li>';
-//            console.log(api);
-//            console.log(api.resourcePath);
-//            console.log(api.get('resourcePath'));
-//            buffer += api.get('resourcePath');
-//            buffer += '</li>';
-//        });
-//        buffer += '</ul>';
-//
-//        buffer += '<div class="resp-tabs-container">';
-//
-//        buffer += '';
 //
 //        buffer += '</div>';
-//
-//
-//        buffer += '';
-//        buffer += '';
-//
-//
-//        //this.collection.each(this.addOne, this);
+
 //        console.log(buffer);
-//        $('#ui-container').append(buffer);
-//        return this;
-//    }
+//        $(this.el).html(buffer);
+
+        return this;
+    }
 });
+
 
 App.Views.Task = Backbone.View.extend({
     initialize: function () {
