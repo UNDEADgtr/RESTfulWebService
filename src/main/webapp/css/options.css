@@ -42,6 +42,10 @@ pre code {
     background-color: #ffffdd;
 }
 
+.model-signature div.snippet{
+    display: none;
+}
+
 .model-signature .snippet small {
     font-size: 0.75em;
 }
@@ -96,16 +100,25 @@ pre code {
     color: #000;
 }
 
-
-
 /*-------------------------------------------   HEADING GET    -----------------------------------------------------*/
 
+body div#ui-container div#resources div.operations h3 div.heading.get {
+    float: none;
+    clear: both;
+    overflow: hidden;
+    display: block;
+    margin: 0;
+    padding: 0;
+    background-color: #e7f0f7;
+    border: 1px solid #c3d9ec;
+}
 
 body div#ui-container div#resources div.operations h3 div.heading.get h3 {
     display: block;
     clear: none;
     margin: 0;
     padding: 0;
+    line-height: 1.1em;
     color: black;
 }
 
@@ -116,7 +129,7 @@ body div#ui-container div#resources div.operations h3 div.heading.get h3 span.ht
     color: white;
     display: inline-block;
     width: 50px;
-    font-size: 0.7em;
+    font-size: 0.5em;
     text-align: center;
     padding: 4px 0 4px 0;
     border-radius: 2px;
@@ -126,9 +139,9 @@ body div#ui-container div#resources div.operations h3 div.heading.get h3 span.pa
     padding-left: 10px;
 }
 
-
 body div#ui-container div#resources div.operations h3 div.heading.get h3 span.path a {
     color: black;
+    font-size: 0.9em;
     text-decoration: none;
 }
 
@@ -151,11 +164,23 @@ body div#ui-container div#resources div.operations h3 div.heading.get h3 span.su
 /*-------------------------------------------   HEADING POST    -----------------------------------------------------*/
 
 
+body div#ui-container div#resources div.operations h3 div.heading.post {
+    float: none;
+    clear: both;
+    overflow: hidden;
+    display: block;
+    margin: 0;
+    padding: 0;
+    background-color: #e7f6ec;
+    border: 1px solid #c3e8d1;
+}
+
 body div#ui-container div#resources div.operations h3 div.heading.post h3 {
     display: block;
     clear: none;
     margin: 0;
     padding: 0;
+    line-height: 1.1em;
     color: black;
 }
 
@@ -166,7 +191,7 @@ body div#ui-container div#resources div.operations h3 div.heading.post h3 span.h
     color: white;
     display: inline-block;
     width: 50px;
-    font-size: 0.7em;
+    font-size: 0.5em;
     text-align: center;
     padding: 4px 0 4px 0;
     border-radius: 2px;
@@ -178,6 +203,7 @@ body div#ui-container div#resources div.operations h3 div.heading.post h3 span.p
 
 body div#ui-container div#resources div.operations h3 div.heading.post h3 span.path a {
     color: black;
+    font-size: 0.9em;
     text-decoration: none;
 }
 
@@ -226,9 +252,9 @@ body div#ui-container div#resources div.operations h3 div.heading.put h3 span.ht
     color: white;
     display: inline-block;
     width: 50px;
-    font-size: 0.7em;
+    font-size: 0.5em;
     text-align: center;
-    padding: 4px 0 4px;
+    padding: 4px 0 4px 0;
     border-radius: 2px;
 }
 
@@ -238,6 +264,7 @@ body div#ui-container div#resources div.operations h3 div.heading.put h3 span.pa
 
 body div#ui-container div#resources div.operations h3 div.heading.put h3 span.path a {
     color: black;
+    font-size: 0.9em;
     text-decoration: none;
 }
 
@@ -286,9 +313,9 @@ body div#ui-container div#resources div.operations h3 div.heading.delete h3 span
     color: white;
     display: inline-block;
     width: 50px;
-    font-size: 0.7em;
+    font-size: 0.5em;
     text-align: center;
-    padding: 7px 0 4px 0;
+    padding: 4px 0 4px 0;
     border-radius: 2px;
 }
 
@@ -298,6 +325,7 @@ body div#ui-container div#resources div.operations h3 div.heading.delete h3 span
 
 body div#ui-container div#resources div.operations h3 div.heading.delete h3 span.path a {
     color: black;
+    font-size: 0.9em;
     text-decoration: none;
 }
 

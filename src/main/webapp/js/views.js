@@ -65,63 +65,259 @@ App.Views.Api = Backbone.View.extend({
             success: this.render
         });
     },
-    //resourcePath: '',
-    //content: '',
     render: function () {
-
-        //this.resourcePath = tpl.getResourcePath(this.model.toJSON());
-        //this.content = tpl.getContent(this.model.toJSON());
-
-
         App.Apis.count--;
-
         if (App.Apis.count == 0) {
             App.Apis.count = App.Apis.models.length;
             (new App.Views.UIContainer({collection: App.Apis})).render();
         }
-
-
     }
 });
 
 App.Views.UIContainer = Backbone.View.extend({
     tagName: 'div',
     render: function () {
-        var buffer;
-        buffer = '<div id="tabs"><ul>';
-        this.collection.each(function (api) {
-            var resourcePath = new App.Views.ResourcePath({model : api})
-            buffer += resourcePath.render().el.innerHTML;
-        });
-        buffer += '</ul>';
-        this.collection.each(function (api) {
-            var apiView = new App.Views.ApiContent({model : api})
-            buffer += apiView.render().el.innerHTML;
-        });
-        buffer += '</div>';
-        console.log(buffer);
-        $('#ui-container').empty();
-        $('#ui-container').append(buffer);
 
-        tpl.buildResources('tabs')
-        tpl.buildOperations('accordion-api');
+        var $el = $(this.el);
+        $el.append(tpl.getResources());
+
+        this.collection.each(function (api) {
+
+            var path = Docs.transformResourceName(api.get('resourcePath'));
+
+            $el.find('div#resources ul').append(tpl.getResourcesTab(path));
+            $el.find('div#resources').append(tpl.getResourcesContent(path));
+
+            path = 'resource_' + path;
+
+            $el.find('div#resources div#' + path).append(tpl.getOptions(path));
+            $el.find('div#resources div#' + path).append('<br/>');
+
+                                                                                                     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            var str = JSON.stringify(api.toJSON(), "", 3);
+
+            $el.find('div#resources div#' + path).append(tpl.getRaw(str));
+
+            var operations = new App.Views.Operations({model: api, path: path})
+
+            $el.find('div#resources div#' + path).append(operations.render().el)
+            //console.log($el.find('div#resources div#' + path).html())
+        });
+
+        console.log(this.el);
+
+        $('#ui-container').empty();
+        $('#ui-container').append(this.el);
+
+        tpl.buildResources('resources')
+        tpl.buildOperations('operations');
+
         $('#ui-container').append(tpl.getFooter(App.ApiDoc.toJSON()));
         return this;
     }
 });
 
-App.Views.ResourcePath = Backbone.View.extend({
+App.Views.Raw = Backbone.View.extend({
     tagName: 'div',
     render: function () {
-        $(this.el).html(tpl.getResourcePath(this.model.toJSON()));
+
+
+
+        var $el = $(this.el);
+        this.model.get('apis').forEach(function (api) {
+            var i = 1;
+            api.operations.forEach(function (operation) {
+                operation.httpMethod = operation.httpMethod.toLowerCase();
+                operation.path = api.path;
+                $el.append(tpl.getHeading(operation));
+                var operationContent = new App.Views.OperationContent({model: operation})
+                $el.append($('<div></div>').append(operationContent.render().el));
+            })
+        });
         return this;
     }
 });
 
+
+App.Views.Operations = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var $el = $(this.el);
+
+        $el.addClass('operations');
+
+        this.model.get('apis').forEach(function (api) {
+            var i = 1;
+            api.operations.forEach(function (operation) {
+                operation.httpMethod = operation.httpMethod.toLowerCase();
+                operation.path = api.path;
+                $el.append(tpl.getHeading(operation));
+                var operationContent = new App.Views.OperationContent({model: operation})
+                $el.append($('<div></div>').append(operationContent.render().el));
+            })
+        });
+        return this;
+    }
+});
+
+
+App.Views.OperationContent = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+
+        var $el = $(this.el);
+        var id = this.model.httpMethod + '_' + this.model.nickname;
+
+        $el.attr({id : id})
+        $el.addClass('content');
+        $el.addClass(this.model.httpMethod);
+
+        $el.append('<h4>Response Class</h4>');
+
+        var modelSignature = new App.Views.ModelSignature({model: this.model, id: id});
+        $el.append(modelSignature.render().el);
+
+        $el.append('<br/><br/>');
+
+        var form = new App.Views.Form({model: this.model});
+        $el.append(form.render().el);
+
+        $el.append('<br/>');
+
+        var response = new App.Views.Response({model: this.model});
+        $el.append(response.render().el);
+
+        //console.log(this.el)
+
+        return this;
+    }
+});
+
+
+App.Views.ModelSignature = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var $el = $(this.el);
+        var id = this.id;
+        var model = this.model;
+
+        $el.addClass('model-signature');
+
+        $el.append(tpl.getSignatureSelect(id));
+
+        $el.append('<div class="signature-container"></div>');
+
+        var description = new App.Views.Description({model: model});
+        $el.find('.signature-container').append(description.render().el);
+
+        var snippet = new App.Views.Snippet({model: model});
+        $el.find('.signature-container').append(snippet.render().el);
+
+        return this;
+    }
+});
+
+App.Views.Description = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var $el = $(this.el);
+        var model = this.model;
+
+        $el.addClass('description');
+
+        $el.append('111');
+
+        $el.append();
+
+
+//        <span class="strong">User {</span>
+//
+//            <div>
+//                <span class="propName propOpt">id</span>
+//            (<span class="propType">long</span>,
+//                <span class="propOptKey">optional</span>),
+//            </div>
+//            <div>
+//                <span class="propName propOpt">username</span>
+//            (<span class="propType">string</span>,
+//                <span class="propOptKey">optional</span>),
+//            </div>
+//
+//            <div>
+//                <span class="propName propOpt">password</span>
+//            (<span class="propType">string</span>,
+//                <span class="propOptKey">optional</span>)
+//            </div>
+//            <span class="strong">}</span>
+
+
+
+
+        return this;
+    }
+});
+
+App.Views.Snippet = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var $el = $(this.el);
+        var model = this.model;
+
+        $el.addClass('snippet');
+
+        //$el.append(tpl.getSignatureSelect(id));
+        $el.append('222');
+
+
+
+        return this;
+    }
+});
+
+
+
+App.Views.Form = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        //$(this.el).html(tpl.getResourcePath(this.model.toJSON()));
+        return this;
+    }
+});
+
+App.Views.Response = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        //$(this.el).html(tpl.getResourcePath(this.model.toJSON()));
+        return this;
+    }
+});
+
+
+App.Views.ResponseClass = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+
+
+        return this;
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 App.Views.ApiContent = Backbone.View.extend({
     tagName: 'div',
     render: function () {
-        var apiAccordion = new App.Views.ApiAccordion({model : this.model});
+        var apiAccordion = new App.Views.ApiAccordion({model: this.model});
         var mJson = this.model.toJSON();
         mJson.AccContent = apiAccordion.render().el.innerHTML
         console.log(mJson)
@@ -142,17 +338,17 @@ App.Views.ApiAccordion = Backbone.View.extend({
 
         buffer = '<div class="accordion-api">';
 
-        this.model.get('apis').forEach(function(api){
+        this.model.get('apis').forEach(function (api) {
             buffer += '<h3>';
 
             console.log(tpl.getHeading(api));
 
 
-            buffer += tpl.getHeading(api) ;
+            buffer += tpl.getHeading(api);
             buffer += '</h3>';
 
             buffer += '<div><p>';
-            var accordionContent = new App.Views.AccordionContent({model : api});
+            var accordionContent = new App.Views.AccordionContent({model: api});
             buffer += accordionContent.render().el.outerHTML;
             buffer += '</p></div>';
 
@@ -218,62 +414,6 @@ App.Views.AccordionContent = Backbone.View.extend({
         return this;
     }
 });
-
-
-App.Views.Task = Backbone.View.extend({
-    initialize: function () {
-        console.log(this.model.attributes)
-    },
-    tagName: 'li',
-    //template: App.template('taskTemplate'),
-    render: function () {
-
-
-        console.log(this.model.toJSON())
-        //console.log(this.template());
-        //var template = this.template(this.model.toJSON());
-        console.log(this.model);
-        this.$el.html(this.model);
-        return this;
-    },
-    remove: function () {
-        this.$el.remove();
-    }
-});
-
-//function getVerticalTab(collection){
-//    buffer: "",
-//
-//
-//
-//        this.buffer = '<div id="verticalTab">';
-//
-//        this.buffer += '<ul class="resp-tabs-list">';
-//
-//        this.addLi;
-//
-////        collection.models.forEach(function (api) {
-////            buffer += this.addLi(api);
-////        });
-//        this.buffer += '</ul>';
-//
-//        this.buffer += '<div class="resp-tabs-container">';
-//
-//        this.buffer += '';
-//
-//        this.buffer += '</div>';
-//
-//
-//        this.buffer += '';
-//        this.buffer += '';
-//
-//        console.log(this.buffer);
-//        //this.collection.each(this.addOne, this);
-//
-//        buffer += '</div>';
-//        this.$el.append(buffer);
-//        return this;
-//}
 
 
 ///*
