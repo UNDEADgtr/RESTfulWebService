@@ -345,7 +345,13 @@ body div#ui-container div#resources div.operations h3 div.heading.delete h3 span
     border-radius: 2px;
 }
 
-/*-------------------------------------------   Table    -----------------------------------------------------*/
+/*-------------------------------------------   FORM    -----------------------------------------------------*/
+
+.required {
+    font-weight: bold;
+}
+
+
 table.fullwidth {
     width: 100%;
 }

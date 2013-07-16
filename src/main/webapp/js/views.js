@@ -28,6 +28,7 @@ App.Views.HeaderView = Backbone.View.extend({
         App.ApiDoc.urlRoot = App.URLSettings.get('discoveryUrl');
 
         new App.Views.ApiDoc({model: App.ApiDoc})
+
     },
     clean: function () {
 
@@ -35,6 +36,10 @@ App.Views.HeaderView = Backbone.View.extend({
             App.Apis.reset();
             App.Apis.modelView.length = 0;
         }
+    },
+    cleanMessages: function () {
+        Message.clean()
+
     }
 });
 
@@ -93,15 +98,13 @@ App.Views.UIContainer = Backbone.View.extend({
             $el.find('div#resources div#' + path).append(tpl.getOptions(path));
             $el.find('div#resources div#' + path).append('<br/>');
 
-                                                                                                     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            var str = JSON.stringify(api.toJSON(), "", 3);
-
-            $el.find('div#resources div#' + path).append(tpl.getRaw(str));
+            var raw = JSON.stringify(api.toJSON(), "", 3);
+            $el.find('div#resources div#' + path).append(tpl.getRaw(raw));
 
             var operations = new App.Views.Operations({model: api, path: path})
 
             $el.find('div#resources div#' + path).append(operations.render().el)
-            //console.log($el.find('div#resources div#' + path).html())
+            //console.log(api)
         });
 
         console.log(this.el);
@@ -117,28 +120,6 @@ App.Views.UIContainer = Backbone.View.extend({
     }
 });
 
-App.Views.Raw = Backbone.View.extend({
-    tagName: 'div',
-    render: function () {
-
-
-
-        var $el = $(this.el);
-        this.model.get('apis').forEach(function (api) {
-            var i = 1;
-            api.operations.forEach(function (operation) {
-                operation.httpMethod = operation.httpMethod.toLowerCase();
-                operation.path = api.path;
-                $el.append(tpl.getHeading(operation));
-                var operationContent = new App.Views.OperationContent({model: operation})
-                $el.append($('<div></div>').append(operationContent.render().el));
-            })
-        });
-        return this;
-    }
-});
-
-
 App.Views.Operations = Backbone.View.extend({
     tagName: 'div',
     render: function () {
@@ -146,12 +127,15 @@ App.Views.Operations = Backbone.View.extend({
 
         $el.addClass('operations');
 
+        ClassUtil.models = this.model.get('models');
+
         this.model.get('apis').forEach(function (api) {
             var i = 1;
             api.operations.forEach(function (operation) {
                 operation.httpMethod = operation.httpMethod.toLowerCase();
                 operation.path = api.path;
                 $el.append(tpl.getHeading(operation));
+
                 var operationContent = new App.Views.OperationContent({model: operation})
                 $el.append($('<div></div>').append(operationContent.render().el));
             })
@@ -168,23 +152,23 @@ App.Views.OperationContent = Backbone.View.extend({
         var $el = $(this.el);
         var id = this.model.httpMethod + '_' + this.model.nickname;
 
-        $el.attr({id : id})
+        $el.attr({id: id})
         $el.addClass('content');
         $el.addClass(this.model.httpMethod);
 
         $el.append('<h4>Response Class</h4>');
 
-        var modelSignature = new App.Views.ModelSignature({model: this.model, id: id});
+        var modelSignature = new App.Views.ModelSignature({model: this.model, idOperation: id});
         $el.append(modelSignature.render().el);
 
         $el.append('<br/><br/>');
 
-        var form = new App.Views.Form({model: this.model});
+        var form = new App.Views.Form({model: this.model, idOperation: id});
         $el.append(form.render().el);
 
         $el.append('<br/>');
 
-        var response = new App.Views.Response({model: this.model});
+        var response = new App.Views.Response({idOperation: id});
         $el.append(response.render().el);
 
         //console.log(this.el)
@@ -198,7 +182,7 @@ App.Views.ModelSignature = Backbone.View.extend({
     tagName: 'div',
     render: function () {
         var $el = $(this.el);
-        var id = this.id;
+        var id = this.options.idOperation;
         var model = this.model;
 
         $el.addClass('model-signature');
@@ -222,36 +206,35 @@ App.Views.Description = Backbone.View.extend({
     render: function () {
         var $el = $(this.el);
         var model = this.model;
+        var responseClass = this.model.responseClass;
 
         $el.addClass('description');
 
-        $el.append('111');
+        var json = ClassUtil.getClassAsJson(responseClass)
 
-        $el.append();
+        if (json) {
+            var buffer = '';
+            var properties = json.properties;
 
+            buffer += '<span class="strong">' + responseClass + ' {</span>';
 
-//        <span class="strong">User {</span>
-//
-//            <div>
-//                <span class="propName propOpt">id</span>
-//            (<span class="propType">long</span>,
-//                <span class="propOptKey">optional</span>),
-//            </div>
-//            <div>
-//                <span class="propName propOpt">username</span>
-//            (<span class="propType">string</span>,
-//                <span class="propOptKey">optional</span>),
-//            </div>
-//
-//            <div>
-//                <span class="propName propOpt">password</span>
-//            (<span class="propType">string</span>,
-//                <span class="propOptKey">optional</span>)
-//            </div>
-//            <span class="strong">}</span>
+            for (var name in properties) {
+                buffer += '<div>'
+                buffer += tpl.getPropName(name);
+                buffer += '('
+                buffer += tpl.getPropType(properties[name].type);
+                buffer += ','
+                buffer += tpl.getPropOptKey('optional');
+                buffer += '),'
+                buffer += '</div>'
+            }
 
+            buffer += '<span class="strong">}</span>';
 
-
+            $el.append(buffer);
+        } else {
+            $el.append(responseClass);
+        }
 
         return this;
     }
@@ -262,32 +245,76 @@ App.Views.Snippet = Backbone.View.extend({
     render: function () {
         var $el = $(this.el);
         var model = this.model;
-
+        var responseClass = this.model.responseClass;
         $el.addClass('snippet');
-
-        //$el.append(tpl.getSignatureSelect(id));
-        $el.append('222');
-
-
-
+        $el.append('<pre></pre>')
+        $el.find('pre').append(ClassUtil.getClassAsFormatJsonString(responseClass))
         return this;
     }
 });
-
 
 
 App.Views.Form = Backbone.View.extend({
     tagName: 'div',
     render: function () {
-        //$(this.el).html(tpl.getResourcePath(this.model.toJSON()));
+        var $el = $(this.el);
+        var model = this.model;
+        var id = this.options.idOperation;
+        var names = new Array();
+
+        $el.append(tpl.getForm());
+
+        if (model.parameters) {
+            model.parameters.forEach(function (parameter) {
+                $el.find('tbody').append(tpl.getRowTable(parameter))
+                names.push(parameter.name);
+            });
+        }
+
+        $el.find('form').attr({id: id + 'form'})
+
+        new App.Views.FormSubmit({model : this.model, idOperation: id, names: names});
+        //new App.Views.FormSubmit();
         return this;
     }
 });
 
+
+App.Views.FormSubmit = Backbone.View.extend({
+    initialize: function () {
+        this.events = {}
+        this.events['click #' + this.options.idOperation + ' form.sandbox input.submit'] = 'save';
+    },
+    el: 'body',
+    save: function (e) {
+        e.preventDefault();
+
+        var that = this;
+        var request = {}
+
+        if (this.options.names) {
+            this.options.names.forEach(function (name) {
+//                console.log($('#' + that.options.idOperation + ' form.sandbox input[name=' + name + ']').val())
+                request[name] = $('#' + that.options.idOperation + ' form.sandbox input[name=' + name + ']').val();
+            })
+        }
+
+        Message.add(JSON.stringify(request))
+
+        //console.log(this.model)
+    }
+})
+
+
 App.Views.Response = Backbone.View.extend({
     tagName: 'div',
     render: function () {
-        //$(this.el).html(tpl.getResourcePath(this.model.toJSON()));
+        var $el = $(this.el);
+        var id = this.options.idOperation;
+
+        $el.append(tpl.getResponseHider(id));
+        $el.append(tpl.getResponse());
+
         return this;
     }
 });
@@ -303,117 +330,105 @@ App.Views.ResponseClass = Backbone.View.extend({
 });
 
 
+//App.Views.ApiContent = Backbone.View.extend({
+//    tagName: 'div',
+//    render: function () {
+//        var apiAccordion = new App.Views.ApiAccordion({model: this.model});
+//        var mJson = this.model.toJSON();
+//        mJson.AccContent = apiAccordion.render().el.innerHTML
+//        console.log(mJson)
+//        var cont = $(tpl.getContent(mJson));
+//        console.log(cont)
+//
+//        $(this.el).html(cont);
+//        console.log(this.el)
+//        return this;
+//    }
+//});
 
-
-
-
-
-
-
-
-
-
-
-App.Views.ApiContent = Backbone.View.extend({
-    tagName: 'div',
-    render: function () {
-        var apiAccordion = new App.Views.ApiAccordion({model: this.model});
-        var mJson = this.model.toJSON();
-        mJson.AccContent = apiAccordion.render().el.innerHTML
-        console.log(mJson)
-        var cont = $(tpl.getContent(mJson));
-        console.log(cont)
-
-        $(this.el).html(cont);
-        console.log(this.el)
-        return this;
-    }
-});
-
-App.Views.ApiAccordion = Backbone.View.extend({
-    tagName: 'div',
-    render: function () {
-
-        var buffer;
-
-        buffer = '<div class="accordion-api">';
-
-        this.model.get('apis').forEach(function (api) {
-            buffer += '<h3>';
-
-            console.log(tpl.getHeading(api));
-
-
-            buffer += tpl.getHeading(api);
-            buffer += '</h3>';
-
-            buffer += '<div><p>';
-            var accordionContent = new App.Views.AccordionContent({model: api});
-            buffer += accordionContent.render().el.outerHTML;
-            buffer += '</p></div>';
-
-        });
-
-        buffer += '</div>';
-
-        console.log(buffer);
-        $(this.el).html(buffer);
-
-        return this;
-    }
-});
-
-
-App.Views.AccordionContent = Backbone.View.extend({
-    tagName: 'div',
-    render: function () {
-
-        console.log(this.model)
-
-//        "path": "/user.json",
-//            "description": "Operations about user",
-//            "operations": [
-//            {
-//                "httpMethod": "POST",
-//                "summary": "Create user",
-//                "notes": "This can only be done by the logged in user.",
-//                "responseClass": "void",
-//                "nickname": "createUser",
-//                "parameters": [
-//                    {
-//                        "description": "Created user object",
-//                        "paramType": "body",
-//                        "required": true,
-//                        "allowMultiple": false,
-//                        "dataType": "User"
-//                    }
-//                ]
-//            }
-//        ]
-
-
+//App.Views.ApiAccordion = Backbone.View.extend({
+//    tagName: 'div',
+//    render: function () {
+//
 //        var buffer;
 //
+//        buffer = '<div class="accordion-api">';
 //
-//        this.model.get('apis').forEach(function(api){
+//        this.model.get('apis').forEach(function (api) {
 //            buffer += '<h3>';
-//            buffer += api.path;
+//
+//            console.log(tpl.getHeading(api));
+//
+//            buffer += tpl.getHeading(api);
 //            buffer += '</h3>';
 //
 //            buffer += '<div><p>';
-//            buffer += api.path;
+//            var accordionContent = new App.Views.AccordionContent({model: api});
+//            buffer += accordionContent.render().el.outerHTML;
 //            buffer += '</p></div>';
 //
 //        });
 //
 //        buffer += '</div>';
-
+//
 //        console.log(buffer);
 //        $(this.el).html(buffer);
+//
+//        return this;
+//    }
+//});
 
-        return this;
-    }
-});
+
+//App.Views.AccordionContent = Backbone.View.extend({
+//    tagName: 'div',
+//    render: function () {
+//
+//        console.log(this.model)
+//
+////        "path": "/user.json",
+////            "description": "Operations about user",
+////            "operations": [
+////            {
+////                "httpMethod": "POST",
+////                "summary": "Create user",
+////                "notes": "This can only be done by the logged in user.",
+////                "responseClass": "void",
+////                "nickname": "createUser",
+////                "parameters": [
+////                    {
+////                        "description": "Created user object",
+////                        "paramType": "body",
+////                        "required": true,
+////                        "allowMultiple": false,
+////                        "dataType": "User"
+////                    }
+////                ]
+////            }
+////        ]
+//
+//
+////        var buffer;
+////
+////
+////        this.model.get('apis').forEach(function(api){
+////            buffer += '<h3>';
+////            buffer += api.path;
+////            buffer += '</h3>';
+////
+////            buffer += '<div><p>';
+////            buffer += api.path;
+////            buffer += '</p></div>';
+////
+////        });
+////
+////        buffer += '</div>';
+//
+////        console.log(buffer);
+////        $(this.el).html(buffer);
+//
+//        return this;
+//    }
+//});
 
 
 ///*
@@ -434,12 +449,12 @@ App.Views.AccordionContent = Backbone.View.extend({
 //});
 
 
-//window.WineView = Backbone.View.extend({
+//window.TaskView = Backbone.View.extend({
 //
 //    tagName: "div", // Not required since 'div' is the default if no el or tagName specified
 //
 //    initialize: function () {
-//        this.template = _.template(tpl.get('wine-details'));
+//        this.template = _.template(tpl.get('task-details'));
 //        this.model.bind("change", this.render, this);
 //    },
 //
@@ -450,8 +465,8 @@ App.Views.AccordionContent = Backbone.View.extend({
 //
 //    events: {
 //        "change input": "change",
-//        "click .save": "saveWine",
-//        "click .delete": "deleteWine"
+//        "click .save": "saveTask",
+//        "click .delete": "deleteTask"
 //    },
 //
 //    change: function (event) {
@@ -463,7 +478,7 @@ App.Views.AccordionContent = Backbone.View.extend({
 //        // this.model.set(change);
 //    },
 //
-//    saveWine: function () {
+//    saveTask: function () {
 //        this.model.set({
 //            name: $('#name').val(),
 //            grapes: $('#grapes').val(),
@@ -474,9 +489,9 @@ App.Views.AccordionContent = Backbone.View.extend({
 //        });
 //        if (this.model.isNew()) {
 //            var self = this;
-//            app.wineList.create(this.model, {
+//            app.taskList.create(this.model, {
 //                success: function () {
-//                    app.navigate('wines/' + self.model.id, false);
+//                    app.navigate('tasks/' + self.model.id, false);
 //                }
 //            });
 //        } else {
@@ -486,10 +501,10 @@ App.Views.AccordionContent = Backbone.View.extend({
 //        return false;
 //    },
 //
-//    deleteWine: function () {
+//    deleteTask: function () {
 //        this.model.destroy({
 //            success: function () {
-//                alert('Wine deleted successfully');
+//                alert('Task deleted successfully');
 //                window.history.back();
 //            }
 //        });
@@ -499,32 +514,32 @@ App.Views.AccordionContent = Backbone.View.extend({
 //});
 //
 //
-//window.WineListView = Backbone.View.extend({
+//window.TaskListView = Backbone.View.extend({
 //
 //    tagName: 'ul',
 //
 //    initialize: function () {
 //        this.model.bind("reset", this.render, this);
 //        var self = this;
-//        this.model.bind("add", function (wine) {
-//            $(self.el).append(new WineListItemView({model: wine}).render().el);
+//        this.model.bind("add", function (task) {
+//            $(self.el).append(new TaskListItemView({model: task}).render().el);
 //        });
 //    },
 //
 //    render: function (eventName) {
-//        _.each(this.model.models, function (wine) {
-//            $(this.el).append(new WineListItemView({model: wine}).render().el);
+//        _.each(this.model.models, function (task) {
+//            $(this.el).append(new TaskListItemView({model: task}).render().el);
 //        }, this);
 //        return this;
 //    }
 //});
 //
-//window.WineListItemView = Backbone.View.extend({
+//window.TaskListItemView = Backbone.View.extend({
 //
 //    tagName: "li",
 //
 //    initialize: function () {
-//        this.template = _.template(tpl.get('wine-list-item'));
+//        this.template = _.template(tpl.get('task-list-item'));
 //        this.model.bind("change", this.render, this);
 //        this.model.bind("destroy", this.close, this);
 //    },

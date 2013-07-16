@@ -14,9 +14,6 @@
     <link href='css/resource.css' media='screen' rel='stylesheet' type='text/css'/>
     <link href='css/options.css' media='screen' rel='stylesheet' type='text/css'/>
 
-    <!--<link href='css/style.css' media='screen' rel='stylesheet' type='text/css'/>-->
-    <!--<link href='css/ui-lightness/jquery-ui-1.8.11.custom.css' media='screen' rel='stylesheet' type='text/css'/>-->
-
     <script type="text/javascript" src="lib/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="lib/underscore.js"></script>
     <script type="text/javascript" src="lib/backbone.js"></script>
@@ -30,6 +27,7 @@
 
 <div id='header'>
     <div class="ui-wrap">
+
         <a id="logo" href="#">RESTfulWebService</a>
 
         <form id='api_selector'>
@@ -48,40 +46,15 @@
             </div>
             <div class='input'>
                 <input id="explore" type="submit" value="Explore">
-                <!--<a id="explore" href="#">Explore</a>-->
             </div>
         </form>
 
     </div>
 </div>
 
-<div id="message-bar" class="swagger-ui-wrap">
+<div id="message-bar" class="ui-wrap">
     &nbsp;
 </div>
-
-<!--<script>-->
-    <!--$(function () {-->
-        <!--$(".operations").accordion({-->
-            <!--collapsible: true-->
-        <!--});-->
-    <!--});-->
-<!--</script>-->
-<!--<script>-->
-    <!--$(function () {-->
-        <!--$("#resources").tabs({-->
-            <!--collapsible: true-->
-        <!--});-->
-    <!--});-->
-<!--</script>-->
-
-
-<script id="headerTempl" type="text/template">
-    <button class="new">{{ apiVersion }}</button>
-</script>
-
-<script id="headerTempl1" type="text/template">
-    <button class="new">New Wine</button>
-</script>
 
 <script src="js/utils.js"></script>
 <script src="js/helper.js"></script>
@@ -91,217 +64,6 @@
 <script src="js/main.js"></script>
 
 <div id="ui-container" class="ui-wrap">
-
-<!--<div id="resources">-->
-<!--<ul>-->
-    <!--<li><a href="#resource_1">Resource 1</a></li>-->
-    <!--<li><a href="#resource_2">Resource 2</a></li>-->
-<!--</ul>-->
-<!--<div id="resource_1">-->
-
-    <!--<div class="options">-->
-        <!--<button onclick="Docs.openCloseOperations('resource_1')">Operations</button>-->
-        <!--<button onclick="Docs.openOperationsForResource('resource_1')">List Operations</button>-->
-        <!--<button onclick="Docs.closeOperationsForResource('resource_1')">Expand Operations</button>-->
-        <!--<button onclick="Docs.openCloseRaw('resource_1')">Raw</button>-->
-    <!--</div>-->
-
-    <!--<div>-->
-        <!--<div class="raw">-->
-            <!--<div class="snippet">-->
-            <!--<pre>-->
-               <!--<code>-->
-                   <!--"basePath":"http://petstore.swagger.wordnik.com/api","resourcePath":"/user"-->
-               <!--</code>-->
-            <!--</pre>-->
-            <!--</div>-->
-        <!--</div>-->
-
-        <!--<div class="operations">-->
-            <!--<h3>-->
-                <!--<div class="heading get">-->
-                    <!--<h3>-->
-                    <!--<span class="http_method">-->
-                        <!--<a href="#">get</a>-->
-                    <!--</span>-->
-                    <!--<span class="path">-->
-                        <!--<a href="#">/user/{username}</a>-->
-                    <!--</span>-->
-                    <!--<span class="summary">-->
-                        <!--<a href="#">Get user by user name</a>-->
-                    <!--</span>-->
-                    <!--</h3>-->
-                <!--</div>-->
-            <!--</h3>-->
-            <!--<div>-->
-
-                <!--<div class="content get">-->
-
-                    <!--<h4>Response Class</h4>-->
-
-                    <!--<div class="model-signature">-->
-
-                        <!--<div class="signature-select">-->
-                            <!--<a class="description-link selected" href="#">Model</a>-->
-                            <!--/-->
-                            <!--<a class="snippet-link" href="#">Model Schema</a>-->
-                        <!--</div>-->
-                        <!--<div>-->
-                            <!--<div class="signature-container">-->
-                                <!--<div class="description">-->
-                                    <!--<span class="strong">User {</span>-->
-
-                                    <!--<div>-->
-                                        <!--<span class="propName propOpt">id</span>-->
-                                        <!--(<span class="propType">long</span>,-->
-                                        <!--<span class="propOptKey">optional</span>),-->
-                                    <!--</div>-->
-                                    <!--<div>-->
-                                        <!--<span class="propName propOpt">username</span>-->
-                                        <!--(<span class="propType">string</span>,-->
-                                        <!--<span class="propOptKey">optional</span>),-->
-                                    <!--</div>-->
-
-                                    <!--<div>-->
-                                        <!--<span class="propName propOpt">password</span>-->
-                                        <!--(<span class="propType">string</span>,-->
-                                        <!--<span class="propOptKey">optional</span>)-->
-                                    <!--</div>-->
-                                    <!--<span class="strong">}</span>-->
-
-                                <!--</div>-->
-
-                                <!--<div class="snippet">-->
-                                    <!--<pre>-->
-                                        <!--<code class="json">{-->
-                                            <!--"<span class="attribute">id</span>":-->
-                                            <!--<span class="value">-->
-                                                <!--<span class="string">"long"</span>-->
-                                            <!--</span>,-->
-                                            <!--"<span class="attribute">username</span>":-->
-                                            <!--<span class="value">-->
-                                                <!--<span class="string">"string"</span>-->
-                                            <!--</span>,-->
-                                            <!--"<span class="attribute">password</span>":-->
-                                            <!--<span class="value">-->
-                                                <!--<span class="string">"string"</span>-->
-                                                                <!--}</span>-->
-                                        <!--</code>-->
-                                                        <!--</pre>-->
-                                    <!--<small class="notice"></small>-->
-                                <!--</div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-
-                    <!--</div>-->
-
-                    <!--<br/>-->
-                    <!--<br/>-->
-
-                    <!--<form accept-charset="UTF-8" class="sandbox">-->
-                        <!--<div style="margin:0;padding:0;display:inline"></div>-->
-
-                        <!--<h4>Parameters</h4>-->
-                        <!--<table class="fullwidth">-->
-                            <!--<thead>-->
-                            <!--<tr>-->
-                                <!--<th style="width: 100px; max-width: 100px">Parameter</th>-->
-                                <!--<th style="width: 310px; max-width: 310px">Value</th>-->
-                                <!--<th style="width: 200px; max-width: 200px">Description</th>-->
-                                <!--<th style="width: 100px; max-width: 100px">Parameter Type-->
-                                <!--</th>-->
-                                <!--<th style="width: 220px; max-width: 230px">Data Type</th>-->
-                            <!--</tr>-->
-                            <!--</thead>-->
-                            <!--<tbody class="operation-params">-->
-                            <!--<tr>-->
-                                <!--<td class="code required">username</td>-->
-                                <!--<td>-->
-                                    <!--<input class="parameter required" minlength="1"-->
-                                           <!--name="username"-->
-                                           <!--placeholder="(required)" type="text" value="">-->
-                                <!--</td>-->
-                                <!--<td>-->
-                                    <!--<strong>Use user1 for testing.</strong>-->
-                                <!--</td>-->
-                                <!--<td>path</td>-->
-                                <!--<td><span class="model-signature">string</span></td>-->
-                            <!--</tr>-->
-                            <!--</tbody>-->
-                        <!--</table>-->
-
-                        <!--<div class="sandbox_header">-->
-                            <!--<input class="submit" name="commit" type="button"-->
-                                   <!--value="Try it out!">-->
-                            <!--<a href="#" class="response_hider">Hide Response</a>-->
-                        <!--</div>-->
-
-                    <!--</form>-->
-
-                    <!--<br/>-->
-
-                    <!--<div class="response" style="">-->
-                        <!--<h4>Request URL</h4>-->
-
-                        <!--<div>-->
-                            <!--<pre>http://petstore.swagger.wordnik.com:80/api/user/user1</pre>-->
-                        <!--</div>-->
-
-                        <!--<h4>Response Body</h4>-->
-
-                        <!--<div class="block response_body xml">-->
-                                <!--<pre class="json">-->
-                                    <!--<code>{-->
-                                        <!--"id": 1,-->
-                                        <!--"username": "user1",-->
-                                        <!--"password": "XXXXXXXXXXX",-->
-                                        <!--}-->
-                                    <!--</code>-->
-                                        <!--</pre>-->
-                        <!--</div>-->
-
-                        <!--<h4>Response Code</h4>-->
-
-                        <!--<div class="block response_code">-->
-                            <!--<pre>200</pre>-->
-                        <!--</div>-->
-
-                        <!--<h4>Response Headers</h4>-->
-
-                        <!--<div class="block response_headers">-->
-                            <!--<pre>{""Date":"Fri, 12 Jul 2013 09:01:42 GMT","Access-Control-Allow-Methods":"GET, POST, DELETE, PUT","Content-Type":"application/json"}</pre>-->
-                        <!--</div>-->
-                    <!--</div>-->
-                <!--</div>-->
-
-            <!--</div>-->
-
-
-            <!--<h3>Section 2</h3>-->
-
-            <!--<div>-->
-
-                <!--<br>-->
-                <!--<br>-->
-                <!--asdfasdf-->
-                <!--<br>-->
-
-            <!--</div>-->
-        <!--</div>-->
-
-    <!--</div>-->
-
-
-<!--</div>-->
-<!--<div id="resource_2">-->
-
-    <!--<br>-->
-    <!--<br>-->
-    <!--<br>-->
-
-<!--</div>-->
-<!--</div>-->
-
 </div>
 
 

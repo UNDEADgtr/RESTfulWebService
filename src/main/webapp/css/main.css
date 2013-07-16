@@ -152,9 +152,24 @@ body #header form#api_selector .input a#explore:hover {
     background-color: #547f00;
 }
 
+/*-------------------------------------------   MESSAGE    -----------------------------------------------------*/
+
+#message-bar {
+    min-height: 30px;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.message-success {
+    color: #89BF04;
+}
+
+.message-fail {
+    color: #cc0000;
+}
 
 
-
+/*-------------------------------------------   FOOTER    -----------------------------------------------------*/
 
 
 .footer{
