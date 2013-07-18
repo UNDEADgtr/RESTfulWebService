@@ -5,9 +5,9 @@ window.App = {
     Router: {},
     template: {},
     URLSettings: {},
-    ApiDoc123: {},
     View: {},
-    AddUrlSettings: {}
+    AddUrlSettings: {},
+    basePath: ''
 }
 
 
@@ -45,10 +45,27 @@ var ClassUtil = {
 var Message = {
     clean: function () {
         $('#message-bar').empty();
+        $('#message-bar').removeClass('message-success')
+        $('#message-bar').removeClass('message-fail')
     },
     add: function (message) {
         this.clean();
+        $('#message-bar').addClass('message-success')
+        $('#message-bar').append(message);
+    },
+    addError: function (message) {
+        this.clean();
+        $('#message-bar').addClass('message-fail')
         $('#message-bar').append(message);
     }
-
 }
+
+var Validation = {
+    url: function (url) {
+        //var a = /((ftp|https?):\/\/)?(www\.)?[a-z0-9\-\.]{3,}\.[a-z]{3}$/
+        return true//a.test(url);
+    }
+}
+
+
+

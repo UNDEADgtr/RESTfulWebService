@@ -8,11 +8,11 @@
             "description": ""
         },
         {
-            "path": "/pet",
+            "path": "/wordList",
             "description": ""
         },
         {
-            "path": "/wordList",
+            "path": "/words",
             "description": ""
         }
     ]

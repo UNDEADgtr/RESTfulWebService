@@ -32,3 +32,18 @@ tpl.loadTemplates(['headerTempl', 'headerTempl1'], function () {
     Backbone.history.start();
 });
 
+
+//$(document).ready(function() {
+//    $('form').validate();
+//});
+
+
+//$.validator.addClassRules({
+//    required: {
+//        required: true
+//
+//    }
+//});
+
+
+

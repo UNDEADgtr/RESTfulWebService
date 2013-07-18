@@ -27,6 +27,15 @@
                     {
                         "code": 404,
                         "message": "User not found"
+                    },
+                    {
+                        "lastName": "last name 4",
+                        "phone": "123-456-7890",
+                        "username": "user4",
+                        "email": "email4@test.com",
+                        "userStatus": 4,
+                        "firstName": "first name 4",
+                        "password": "XXXXXXXXXXX"
                     }
                 ]
             }

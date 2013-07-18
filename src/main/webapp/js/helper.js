@@ -48,11 +48,24 @@ tpl = {
             '</form>',
         'rowTable': '<tr>' +
             '<td class="code required">{{name}}</td>' +
-            '<td class="input"><input class="parameter required" minlength="1" name="{{name}}" placeholder="(required)" type="text" value=""></td>' +
+            '<td class="input">{{{input}}}</td>' +
             '<td><strong>{{description}}</strong></td>' +
-            '<td>{{name}}</td>' +
+            '<td>{{paramType}}</td>' +
             '<td>{{dataType}}</td>' +
             '</tr>',
+        'inputString': '<input class="parameter{{requiredTrue}}" minlength="1" name="{{name}}" placeholder="{{placeholder}}" type="text" value="{{defaultValue}}">',
+        'inputList': '' +
+            '<select class="parameter" name="{{name}}">' +
+            '{{#each allowableValues.values}}' +
+            '<option value="{{this}}">{{this}}</option>' +
+            '{{/each}}' +
+            '</select>',
+        'inputRange': '<input class="parameter" name="{{name}}" placeholder="{{placeholder}}" type="number" value="{{defaultValue}}" min="{{min}}" max="{{max}}" step="0.1">',
+        'inputDate': '<input class="parameter datepicker" name="{{name}}" type="text" value="{{defaultValue}}" placeholder="{{placeholder}}"/>',
+        'inputTextArea': '<textarea class="body-textarea" name="{{name}}" value="{{defaultValue}}" placeholder="{{placeholder}}" style="margin: 0px; width: 210px; height: 128px;"></textarea>' +
+            '<div><span style="float: right">*json format</span></div>',
+
+
         'responseHider': '<a href="#" class="response_hider" onclick="Docs.hideResponse(\'{{id}}\')">Hide Response</a>',
         'response': '<div class="response">' +
             '<h4>Request URL</h4>' +
@@ -61,7 +74,7 @@ tpl = {
             '</div>' +
             '<h4>Response Body</h4>' +
             '<div class="block response_body xml">' +
-            '<pre class="json"> {{ responseBody }} </pre>' +
+            '<pre class="json">{{ responseBody }}</pre>' +
             '</div>' +
             '<h4>Response Code</h4>' +
             '<div class="block response_code">' +
@@ -148,18 +161,71 @@ tpl = {
         return Handlebars.compile(this.templatesPattern.form)();
     },
     getRowTable: function (model) {
+        //        {
+//            "name": "minCorpusCount",
+//            "defaultValue": "5",
+//            "description": "Minimum corpus frequency for terms",
+//            "required": false,
+//            "allowableValues": {
+//                "max": "Infinity",
+//                "min": 0.0,
+//                "valueType": "RANGE"
+//                "values": ["noun", "adjective", "verb", "adverb", "interjection", "pronoun", "preposition", "abbreviation", "affix", "article", "auxiliary-verb", "conjunction", "definite-article", "family-name", "given-name", "idiom", "imperative", "noun-plural", "noun-posessive", "past-participle", "phrasal-prefix", "proper-noun", "proper-noun-plural", "proper-noun-posessive", "suffix", "verb-intransitive", "verb-transitive"],
+//                "valueType": "LIST"
+//            },
+//            "dataType": "int",
+//            "paramType": "query",
+//            "allowMultiple": false
+//        }
+
+
+        if (model.required) {
+            model.requiredTrue = ' required'
+            model.placeholder = '(required)'
+        }
+        if (!model.name) {
+            model.name = model.dataType
+        }
+
+        if (!model.allowableValues || !model.allowableValues.valueType) {
+
+            if(model.paramType == 'body'){
+                model.input = this.getInputTextArea(model)
+            } else {
+                model.input = this.getInputString(model)
+            }
+
+
+        } else if (model.allowableValues.valueType == 'LIST') {
+            model.input = this.getInputList(model)
+        } else if (model.allowableValues.valueType == 'RANGE') {
+            model.input = this.getInputRange(model)
+        } else if (model.allowableValues.valueType == 'DATE') {
+            model.input = this.getInputDate(model)
+        }
+
         return Handlebars.compile(this.templatesPattern.rowTable)(model);
     },
+    getInputString: function (model) {
+        return Handlebars.compile(this.templatesPattern.inputString)(model);
+    },
+    getInputList: function (model) {
+        return Handlebars.compile(this.templatesPattern.inputList)(model);
+    },
+    getInputRange: function (model) {
+        return Handlebars.compile(this.templatesPattern.inputRange)(model);
+    },
+    getInputDate: function (model) {
+        return Handlebars.compile(this.templatesPattern.inputDate)(model);
+    },
+    getInputTextArea: function (model) {
+        return Handlebars.compile(this.templatesPattern.inputTextArea)(model);
+    },
+
     getResponseHider: function (id) {
         return Handlebars.compile(this.templatesPattern.responseHider)({id: id});
     },
     getResponse: function (model) {
-        var model = {};
-        model.requestURL = '1';
-        model.responseBody = '2';
-        model.responseCode = '3';
-        model.responseHeaders = '4';
-
         return Handlebars.compile(this.templatesPattern.response)(model);
     },
     getFooter: function (model) {
@@ -181,6 +247,11 @@ tpl = {
             collapsible: true,
             autoHeight: true
 
+        });
+    },
+    buildDatepicker: function (id) {
+        $("." + id).datepicker({
+            dateFormat: 'yy-mm-dd'
         });
     }
 

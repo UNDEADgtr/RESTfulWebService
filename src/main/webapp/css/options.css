@@ -387,6 +387,11 @@ table tbody tr.offset {
     background-color: #f0f0f0;
 }
 
+input.parameter {
+    width: 200px;
+    border: 1px solid #aaa;
+}
+
 
 /*-------------------------------------------  CONTENT  GET  -----------------------------------------------------*/
 

@@ -1,6 +1,6 @@
 {"apiVersion": "0.2", "swaggerVersion": "1.1", "basePath": "http://petstore.swagger.wordnik.com/api", "resourcePath": "/pet", "apis": [
     {
-        "path": "/pet.{format}/{petId}",
+        "path": "/pet.json/{petId}",
         "description": "Operations about pets",
         "operations": [
             {
@@ -33,7 +33,7 @@
         ]
     },
     {
-        "path": "/pet.{format}/findByStatus",
+        "path": "/pet.json/findByStatus",
         "description": "Operations about pets",
         "operations": [
             {
@@ -68,7 +68,7 @@
         ]
     },
     {
-        "path": "/pet.{format}/findByTags",
+        "path": "/pet.json/findByTags",
         "description": "Operations about pets",
         "operations": [
             {

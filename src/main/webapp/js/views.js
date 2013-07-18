@@ -18,16 +18,23 @@ App.Views.HeaderView = Backbone.View.extend({
     submit: function (e) {
         e.preventDefault();
         this.clean();
-        App.URLSettings = new App.Models.URLSettings;
-        App.URLSettings.set({
-            discoveryUrl: this.discoveryUrl.val(),
-            apiKey: this.apiKey.val()
-        });
+        this.cleanMessages();
+        if (Validation.url(this.discoveryUrl.val())) {
+            Message.add('fetching resource list: ' + this.discoveryUrl.val());
 
-        App.ApiDoc = new App.Models.ApiDoc();
-        App.ApiDoc.urlRoot = App.URLSettings.get('discoveryUrl');
+            App.URLSettings = new App.Models.URLSettings;
+            App.URLSettings.set({
+                discoveryUrl: this.discoveryUrl.val(),
+                apiKey: this.apiKey.val()
+            });
 
-        new App.Views.ApiDoc({model: App.ApiDoc})
+            App.ApiDoc = new App.Models.ApiDoc();
+            App.ApiDoc.urlRoot = App.URLSettings.get('discoveryUrl');
+
+            new App.Views.ApiDoc({model: App.ApiDoc})
+        } else {
+            Message.addError('incorrect url');
+        }
 
     },
     clean: function () {
@@ -47,6 +54,7 @@ App.Views.ApiDoc = Backbone.View.extend({
     initialize: function () {
         var thisView = this
         this.model.fetch().done(function () {
+            App.basePath = App.ApiDoc.get('basePath');
             thisView.render()
         });
     },
@@ -114,8 +122,12 @@ App.Views.UIContainer = Backbone.View.extend({
 
         tpl.buildResources('resources')
         tpl.buildOperations('operations');
+        tpl.buildDatepicker('datepicker');
+
 
         $('#ui-container').append(tpl.getFooter(App.ApiDoc.toJSON()));
+
+        Message.add('fetched resource list: ' + App.basePath);
         return this;
     }
 });
@@ -168,8 +180,8 @@ App.Views.OperationContent = Backbone.View.extend({
 
         $el.append('<br/>');
 
-        var response = new App.Views.Response({idOperation: id});
-        $el.append(response.render().el);
+        //var response = new App.Views.Response({idOperation: id});
+        //$el.append(response.render().el);
 
         //console.log(this.el)
 
@@ -273,7 +285,7 @@ App.Views.Form = Backbone.View.extend({
 
         $el.find('form').attr({id: id + 'form'})
 
-        new App.Views.FormSubmit({model : this.model, idOperation: id, names: names});
+        new App.Views.FormSubmit({model: this.model, idOperation: id, names: names});
         //new App.Views.FormSubmit();
         return this;
     }
@@ -283,42 +295,140 @@ App.Views.Form = Backbone.View.extend({
 App.Views.FormSubmit = Backbone.View.extend({
     initialize: function () {
         this.events = {}
-        this.events['click #' + this.options.idOperation + ' form.sandbox input.submit'] = 'save';
+        this.events['click #' + this.options.idOperation + ' form.sandbox input.submit'] = 'submit';
     },
     el: 'body',
-    save: function (e) {
+    submit: function (e) {
         e.preventDefault();
-
+        console.log('submit')
         var that = this;
-        var request = {}
+        var id = this.options.idOperation;
+        var model = this.model;
 
-        if (this.options.names) {
-            this.options.names.forEach(function (name) {
-//                console.log($('#' + that.options.idOperation + ' form.sandbox input[name=' + name + ']').val())
-                request[name] = $('#' + that.options.idOperation + ' form.sandbox input[name=' + name + ']').val();
-            })
+        var error_free = true;
+
+        $('#' + id + ' form.sandbox input.required').each(function () {
+            $(this).removeClass('error');
+            if ($(this).val() == '') {
+                $(this).addClass('error');
+                //$(this).wiggle();
+                error_free = false;
+            }
+        });
+
+        if (error_free) {
+            var values = {}
+            var isErrors = false;
+
+            if (this.options.names) {
+                this.options.names.forEach(function (name) {
+                    if ($('#' + id + ' form.sandbox input[name=' + name + ']').val()) {
+                        values[name] = $('#' + id + ' form.sandbox input[name=' + name + ']').val();
+                    } else {
+                        try {
+                            values[name] = JSON.parse($('#' + id + ' form.sandbox textarea[name=' + name + ']').val());
+                        }
+                        catch (e) {
+                            Message.addError('invalid json format');
+                            isErrors = true;
+                        }
+                    }
+                })
+            }
+            if (!isErrors) {
+                new App.Views.Response({idOperation: id, operation: model, values: values});
+            }
         }
-
-        Message.add(JSON.stringify(request))
-
-        //console.log(this.model)
     }
 })
 
 
 App.Views.Response = Backbone.View.extend({
+    initialize: function () {
+        var thisView = this;
+        var operation = this.options.operation;
+        var values = this.options.values;
+
+        var path = '';
+
+        this.model = new App.Models.Response();
+        path = App.basePath + operation.path;
+
+        if (operation.parameters) {
+            operation.parameters.forEach(function (parameter) {
+                var value = values[parameter.name]
+
+                if (parameter.paramType == 'path') {
+                    path = path.replace("\{" + parameter.name + "\}", value);
+                } else if (parameter.paramType == 'query') {
+                    if (path.indexOf('?') < 0) {
+                        path = path + '?' + parameter.name + '=' + value;
+                    } else {
+                        path = path + '&' + parameter.name + '=' + value;
+                    }
+                } else if (parameter.paramType == 'body') {
+                    console.log(value)
+                    thisView.model.set(value);
+                }
+
+            });
+        }
+        this.model.urlRoot = path;
+
+        console.log(path)
+        console.log(this.model)
+
+        var thatModel = this.model
+
+        this.model.sync(operation.httpMethod).done(function () {
+            thisView.xhr = thatModel.xhr;
+            thisView.render()
+        })
+
+//        this.model.fetch({
+//            success: function (data, textStatus, jqXHR) {
+//                thisView.xhr = jqXHR.xhr;
+//                thisView.render()
+//            },
+//            error: function (data, jqXHR) {
+//                thisView.xhr = jqXHR.xhr;
+//                thisView.render()
+//            }
+//        })
+    },
     tagName: 'div',
     render: function () {
         var $el = $(this.el);
         var id = this.options.idOperation;
+        var model = this.model;
+        var xhr = this.xhr;
+        var operation = this.options.operation;
+
+        console.log(xhr)
+
+        var response = {};
+        response.requestURL = model.urlRoot;
+
+        if (xhr.getResponseHeader('Content-Type') == 'application/json') {
+            response.responseBody = JSON.stringify(model.toJSON(), '', 3);
+        } else if (xhr.getResponseHeader('Content-Type') == 'text/plain') {
+            response.responseBody = xhr.responseText;
+        }
+
+        response.responseCode = xhr.status;
+        response.responseHeaders = xhr.getAllResponseHeaders();
 
         $el.append(tpl.getResponseHider(id));
-        $el.append(tpl.getResponse());
+        $el.append(tpl.getResponse(response));
+
+        $('#' + id + '.content a.response_hider').remove();
+        $('#' + id + '.content div.response').remove();
+
+        $('#' + id + '.content').append(this.el);
 
         return this;
     }
 });
-
 
 App.Views.ResponseClass = Backbone.View.extend({
     tagName: 'div',
