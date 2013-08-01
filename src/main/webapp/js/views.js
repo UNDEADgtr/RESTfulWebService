@@ -139,7 +139,7 @@ App.Views.Operations = Backbone.View.extend({
 
         $el.addClass('operations');
 
-        ClassUtil.models = this.model.get('models');
+        JsonUtil.models = this.model.get('models');
 
         this.model.get('apis').forEach(function (api) {
             var i = 1;
@@ -173,7 +173,7 @@ App.Views.OperationContent = Backbone.View.extend({
         var modelSignature = new App.Views.ModelSignature({model: this.model, idOperation: id});
         $el.append(modelSignature.render().el);
 
-        $el.append('<br/><br/>');
+        $el.append('<br/>');
 
         var form = new App.Views.Form({model: this.model, idOperation: id});
         $el.append(form.render().el);
@@ -209,6 +209,13 @@ App.Views.ModelSignature = Backbone.View.extend({
         var snippet = new App.Views.Snippet({model: model});
         $el.find('.signature-container').append(snippet.render().el);
 
+
+        if (model.errorResponses) {
+            $el.append(tpl.getResponseErrors(id));
+
+            var errors = new App.Views.Errors({model: model});
+            $el.find('.response-errors').append(errors.render().el);
+        }
         return this;
     }
 });
@@ -222,7 +229,7 @@ App.Views.Description = Backbone.View.extend({
 
         $el.addClass('description');
 
-        var json = ClassUtil.getClassAsJson(responseClass)
+        var json = JsonUtil.getClassAsJson(responseClass)
 
         if (json) {
             var buffer = '';
@@ -257,10 +264,23 @@ App.Views.Snippet = Backbone.View.extend({
     render: function () {
         var $el = $(this.el);
         var model = this.model;
-        var responseClass = this.model.responseClass;
+        var responseClass = model.responseClass;
         $el.addClass('snippet');
         $el.append('<pre></pre>')
-        $el.find('pre').append(ClassUtil.getClassAsFormatJsonString(responseClass))
+        $el.find('pre').append(JsonUtil.getClassAsFormatJsonString(responseClass))
+        return this;
+    }
+});
+
+App.Views.Errors = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var $el = $(this.el);
+        var model = this.model;
+        var responseClass = model.responseClass;
+        $el.addClass('errors');
+        $el.append('<pre></pre>')
+        $el.find('pre').append(JSON.stringify(model.errorResponses, '', 3))
         return this;
     }
 });
@@ -308,6 +328,7 @@ App.Views.FormSubmit = Backbone.View.extend({
         var error_free = true;
 
         $('#' + id + ' form.sandbox input.required').each(function () {
+
             $(this).removeClass('error');
             if ($(this).val() == '') {
                 $(this).addClass('error');
@@ -315,13 +336,14 @@ App.Views.FormSubmit = Backbone.View.extend({
                 error_free = false;
             }
         });
-
+        console.log(error_free)
         if (error_free) {
             var values = {}
             var isErrors = false;
 
             if (this.options.names) {
                 this.options.names.forEach(function (name) {
+                    console.log($('#' + id + ' form.sandbox input[name=' + name + ']').val())
                     if ($('#' + id + ' form.sandbox input[name=' + name + ']').val()) {
                         values[name] = $('#' + id + ' form.sandbox input[name=' + name + ']').val();
                     } else {
@@ -494,27 +516,6 @@ App.Views.ResponseClass = Backbone.View.extend({
 //    render: function () {
 //
 //        console.log(this.model)
-//
-////        "path": "/user.json",
-////            "description": "Operations about user",
-////            "operations": [
-////            {
-////                "httpMethod": "POST",
-////                "summary": "Create user",
-////                "notes": "This can only be done by the logged in user.",
-////                "responseClass": "void",
-////                "nickname": "createUser",
-////                "parameters": [
-////                    {
-////                        "description": "Created user object",
-////                        "paramType": "body",
-////                        "required": true,
-////                        "allowMultiple": false,
-////                        "dataType": "User"
-////                    }
-////                ]
-////            }
-////        ]
 //
 //
 ////        var buffer;

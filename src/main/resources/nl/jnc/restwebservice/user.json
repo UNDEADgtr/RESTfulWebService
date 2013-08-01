@@ -36,6 +36,43 @@
             ]
         },
         {
+            "path": "/users/",
+            "description": "Operations about user",
+            "operations": [
+                {
+                    "httpMethod": "GET",
+                    "summary": "Get user by user name",
+                    "responseClass": "User",
+                    "nickname": "getUserByParameters",
+                    "parameters": [
+                        {
+                            "name": "access",
+                            "defaultValue": "true",
+                            "description": "User has access or no",
+                            "required": false,
+                            "allowableValues": {
+                                "values": ["false", "true"],
+                                "valueType": "LIST"
+                            },
+                            "dataType": "string",
+                            "paramType": "query",
+                            "allowMultiple": false
+                        }
+                    ],
+                    "errorResponses": [
+                        {
+                            "code": 400,
+                            "reason": "Invalid username supplied"
+                        },
+                        {
+                            "code": 404,
+                            "reason": "User not found"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "path": "/user/login",
             "description": "Operations about user",
             "operations": [

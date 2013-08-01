@@ -100,6 +100,35 @@ pre code {
     color: #000;
 }
 
+/*-----------------------------------------   RESPONSE ERRORS   ----------------------------------------------------*/
+
+.response-errors {
+    font-family: "Droid Sans", sans-serif;
+    font-size: 1em;
+    line-height: 1.5em;
+}
+
+.response-errors .errors {
+    clear: both;
+}
+
+.response-errors a {
+    text-decoration: none;
+    color: #d3d3d3;
+}
+
+.response-errors a:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+.response-errors .selected {
+    color: #000000;
+    text-decoration: none;
+}
+
+
+
 /*-------------------------------------------   HEADING GET    -----------------------------------------------------*/
 
 body div#ui-container div#resources div.operations h3 div.heading.get {
@@ -511,7 +540,7 @@ body div#ui-container div#resources div.operations div.content.put {
     margin: 0 0 20px;
 }
 
-body div#ui-container div#resources div.operations div.content.put div.content h4 {
+body div#ui-container div#resources div.operations div.content.put h4 {
     color: #c5862b;
     font-size: 1.1em;
     margin: 0;

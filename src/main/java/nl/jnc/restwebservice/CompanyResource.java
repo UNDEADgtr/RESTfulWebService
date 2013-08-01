@@ -39,6 +39,7 @@ public class CompanyResource {
             user.put("password", "XXXXXXXXXXX");
             user.put("phone", "123-456-7890");
             user.put("userStatus", 1);
+            user.put("access", true);
 
             users.put("1", user);
 
@@ -51,6 +52,7 @@ public class CompanyResource {
             user.put("password", "XXXXXXXXXXX");
             user.put("phone", "123-456-7890");
             user.put("userStatus", 2);
+            user.put("access", false);
 
             users.put("2", user);
 
@@ -63,6 +65,7 @@ public class CompanyResource {
             user.put("password", "XXXXXXXXXXX");
             user.put("phone", "123-456-7890");
             user.put("userStatus", 3);
+            user.put("access", true);
 
             users.put("3", user);
         }
@@ -108,6 +111,38 @@ public class CompanyResource {
                 Map.Entry entry = (Map.Entry) object;
                 JSONObject u = (JSONObject) entry.getValue();
                 if (u.get("username").equals(username)) {
+                    user = u;
+                    break;
+                }
+            }
+
+            if (user == null) {
+                JSONObject error = new JSONObject();
+                error.put("type", "error");
+                error.put("code", 404);
+                error.put("reason", "The user cannot be found");
+                return error;
+            }
+            //return Response.status(200).entity(user).build();
+            return user;
+        } catch (Exception e) {
+            logger.error(msg, e);
+            throw new Exception(e);
+        }
+    }
+
+    @GET
+    @Formatted
+    @Path("/users/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JSONObject readUser(@QueryParam("username") boolean access, @QueryParam("email") String email, @QueryParam("userStatus") int userStatus) throws Exception {
+        String msg = String.format("Get user configuration for access=%s, email=%s, userStatus=%s", access, email, userStatus);
+        try {
+            JSONObject user = null;
+            for (Object object : users.entrySet()) {
+                Map.Entry entry = (Map.Entry) object;
+                JSONObject u = (JSONObject) entry.getValue();
+                if (u.get("access").equals(access) && u.get("email").equals(email) && u.get("userStatus").equals(userStatus)) {
                     user = u;
                     break;
                 }

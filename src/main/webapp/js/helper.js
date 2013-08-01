@@ -19,13 +19,19 @@ tpl = {
             '<span class="summary"><a href="#">{{ summary }}</a></span>' +
             '</h3></div></h3>',
         'signatureSelect': '<div class="signature-select">' +
-            '<a class="description-link selected" href="#" onclick="Docs.showModel(\'{{id}}\')">Model</a>' +
+            '<a class="description-link selected" href="#description" onclick="Docs.showModel(\'{{id}}\')">Model</a>' +
             ' / ' +
-            '<a class="snippet-link" href="#" onclick="Docs.showModelSchema(\'{{id}}\')">Model Schema</a>' +
+            '<a class="snippet-link" href="#snippet" onclick="Docs.showModelSchema(\'{{id}}\')">Model Schema</a>' +
             '</div>',
         'propName': '<span class="propName propOpt">{{propName}}</span>',
         'propType': '<span class="propType">{{propType}}</span>',
         'propOptKey': '<span class="propOptKey">{{propOptKey}}</span>',
+        'responseErrors': '<h4>Response Errors</h4>'+
+            '<div class="response-errors">'+
+            '<a class="errors-link selected" href="#errors" onclick="Docs.showHideError(\'{{id}}\')">Show/Hide</a>'+
+            '</div>',
+
+
         'form': '<form accept-charset="UTF-8" class="sandbox">' +
             '<div style="margin:0;padding:0;display:inline"></div>' +
             '<h4>Parameters</h4>' +
@@ -55,7 +61,7 @@ tpl = {
             '</tr>',
         'inputString': '<input class="parameter{{requiredTrue}}" minlength="1" name="{{name}}" placeholder="{{placeholder}}" type="text" value="{{defaultValue}}">',
         'inputList': '' +
-            '<select class="parameter" name="{{name}}">' +
+            '<select class="parameter" name="{{name}}" value="{{defaultValue}}">' +
             '{{#each allowableValues.values}}' +
             '<option value="{{this}}">{{this}}</option>' +
             '{{/each}}' +
@@ -156,6 +162,9 @@ tpl = {
     },
     getPropOptKey: function (propOptKey) {
         return Handlebars.compile(this.templatesPattern.propOptKey)({propOptKey: propOptKey});
+    },
+    getResponseErrors: function (id) {
+        return Handlebars.compile(this.templatesPattern.responseErrors)({id: id});
     },
     getForm: function () {
         return Handlebars.compile(this.templatesPattern.form)();
@@ -293,6 +302,10 @@ var Docs = {
 
         $('div#' + id + ' a.snippet-link').addClass('selected')
         $('div#' + id + ' div.snippet').show();
+    },
+    showHideError: function (id) {
+        $('div#' + id + ' a.errors-link').toggleClass('selected')
+        $('div#' + id + ' div.errors').toggle();
     },
     hideResponse: function (id) {
         $('div#' + id + ' div.response').hide();

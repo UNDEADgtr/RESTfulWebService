@@ -11,7 +11,7 @@ window.App = {
 }
 
 
-var ClassUtil = {
+var JsonUtil = {
     getClassAsFormatJsonString: function (clazz) {
         var models = this.models;
         for (var clazzName in models) {
@@ -36,9 +36,6 @@ var ClassUtil = {
             }
         }
         return false
-    },
-    openOperationsForResource: function (resource) {
-
     }
 };
 

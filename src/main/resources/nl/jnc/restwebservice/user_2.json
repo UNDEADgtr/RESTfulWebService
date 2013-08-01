@@ -36,6 +36,31 @@
                         "userStatus": 4,
                         "firstName": "first name 4",
                         "password": "XXXXXXXXXXX"
+//                    },
+//                    {
+//                        "name": "email",
+//                        "description": "Users email",
+//                        "required": false,
+//                        "allowableValues": {
+//                            "values": ["email0@test.com", "email1@test.com", "email2@test.com", "email3@test.com", "email4@test.com"],
+//                            "valueType": "LIST"
+//                        },
+//                        "dataType": "string",
+//                        "paramType": "query",
+//                        "allowMultiple": false
+//                    },
+//                    {
+//                        "name": "userStatus",
+//                        "description": "User status",
+//                        "defaultValue": "3",
+//                        "required": false,
+//                        "allowableValues": {
+//                            "values": ["1", "2", "3"],
+//                            "valueType": "LIST"
+//                        },
+//                        "dataType": "string",
+//                        "paramType": "query",
+//                        "allowMultiple": false
                     }
                 ]
             }
