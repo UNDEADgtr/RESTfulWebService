@@ -19,16 +19,20 @@ tpl = {
             '<span class="summary"><a href="#">{{ summary }}</a></span>' +
             '</h3></div></h3>',
         'signatureSelect': '<div class="signature-select">' +
-            '<a class="description-link selected" href="#description" onclick="Docs.showModel(\'{{id}}\')">Model</a>' +
+            '<a class="description-link selected" href="#model" onclick="Docs.showModel(\'{{id}}\')">Model</a>' +
             ' / ' +
-            '<a class="snippet-link" href="#snippet" onclick="Docs.showModelSchema(\'{{id}}\')">Model Schema</a>' +
+            '<a class="snippet-link" href="#model" onclick="Docs.showModelSchema(\'{{id}}\')">Model Schema</a>' +
             '</div>',
         'propName': '<span class="propName propOpt">{{propName}}</span>',
         'propType': '<span class="propType">{{propType}}</span>',
         'propOptKey': '<span class="propOptKey">{{propOptKey}}</span>',
-        'responseErrors': '<h4>Response Errors</h4>'+
-            '<div class="response-errors">'+
-            '<a class="errors-link selected" href="#errors" onclick="Docs.showHideError(\'{{id}}\')">Show/Hide</a>'+
+        'responseErrors': '<h4>Response Errors</h4>' +
+            '<div class="response-errors">' +
+            '<a class="errors-link selected" href="#errors" onclick="Docs.showHideError(\'{{id}}\')">Show/Hide</a>' +
+            '</div>',
+        'modelObject': '<h4>Model object</h4>' +
+            '<div class="model-object">' +
+            '<a class="object-link selected" href="#model" onclick="Docs.showHideModelObject(\'{{id}}\')">Show/Hide</a>' +
             '</div>',
 
 
@@ -66,9 +70,9 @@ tpl = {
             '<option value="{{this}}">{{this}}</option>' +
             '{{/each}}' +
             '</select>',
-        'inputRange': '<input class="parameter" name="{{name}}" placeholder="{{placeholder}}" type="number" value="{{defaultValue}}" min="{{min}}" max="{{max}}" step="0.1">',
-        'inputDate': '<input class="parameter datepicker" name="{{name}}" type="text" value="{{defaultValue}}" placeholder="{{placeholder}}"/>',
-        'inputTextArea': '<textarea class="body-textarea" name="{{name}}" value="{{defaultValue}}" placeholder="{{placeholder}}" style="margin: 0px; width: 210px; height: 128px;"></textarea>' +
+        'inputRange': '<input class="parameter{{requiredTrue}}" name="{{name}}" placeholder="{{placeholder}}" type="number" value="{{defaultValue}}" min="{{min}}" max="{{max}}" step="0.1">',
+        'inputDate': '<input class="parameter datepicker{{requiredTrue}}" name="{{name}}" type="text" value="{{defaultValue}}" placeholder="{{placeholder}}"/>',
+        'inputTextArea': '<textarea class="body-textarea{{requiredTrue}}" name="{{name}}" value="{{defaultValue}}" placeholder="{{placeholder}}" style="margin: 0px; width: 210px; height: 128px;"></textarea>' +
             '<div><span style="float: right">*json format</span></div>',
 
 
@@ -166,6 +170,9 @@ tpl = {
     getResponseErrors: function (id) {
         return Handlebars.compile(this.templatesPattern.responseErrors)({id: id});
     },
+    getModelObject: function (id) {
+        return Handlebars.compile(this.templatesPattern.modelObject)({id: id});
+    },
     getForm: function () {
         return Handlebars.compile(this.templatesPattern.form)();
     },
@@ -198,7 +205,7 @@ tpl = {
 
         if (!model.allowableValues || !model.allowableValues.valueType) {
 
-            if(model.paramType == 'body'){
+            if (model.paramType == 'body') {
                 model.input = this.getInputTextArea(model)
             } else {
                 model.input = this.getInputString(model)
@@ -307,6 +314,10 @@ var Docs = {
         $('div#' + id + ' a.errors-link').toggleClass('selected')
         $('div#' + id + ' div.errors').toggle();
     },
+    showHideModelObject: function (id) {
+        $('div#' + id + ' a.object-link').toggleClass('selected')
+        $('div#' + id + ' div.objects').toggle();
+    },
     hideResponse: function (id) {
         $('div#' + id + ' div.response').hide();
         $('div#' + id + ' a.response_hider').hide();
@@ -314,5 +325,33 @@ var Docs = {
 };
 
 
+(function ($) {
+    $.sticker = function (o) {
+        var o = $.extend({
+            time: 5000,
+            speed: 'slow',
+            note: null,
+            className: null,
+            position: {top: 0, right: 0}
+        }, o);
+        var stickers = $('#jquery-stickers');
+        if (!stickers.length) {
+            $('body').prepend('<div id="jquery-stickers"></div>');
+            var stickers = $('#jquery-stickers');
+        }
+        stickers.css('position', 'fixed').css({right: 'auto', left: 'auto', top: 'auto', bottom: 'auto'}).css(o.position);
+        var stick = $('<div class="stick"></div>');
+        stickers.append(stick);
+        if (o.className) stick.addClass(o.className);
+        stick.html(o.note);
+        setTimeout(function () {
+            stick.fadeOut(o.speed, function () {
+                $(this).remove();
+            });
+        }, o.time);
 
+    };
+})(jQuery);
 
+//$.sticker({note:'Проба',className:'stick-classic'});
+//$.sticker({note:'Это ошибка.',className:'stick-error'});

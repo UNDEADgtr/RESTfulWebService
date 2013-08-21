@@ -141,6 +141,8 @@ App.Views.Operations = Backbone.View.extend({
 
         JsonUtil.models = this.model.get('models');
 
+        //console.log(this.model.get('models'))
+
         this.model.get('apis').forEach(function (api) {
             var i = 1;
             api.operations.forEach(function (operation) {
@@ -197,6 +199,8 @@ App.Views.ModelSignature = Backbone.View.extend({
         var id = this.options.idOperation;
         var model = this.model;
 
+        //console.log(model)
+
         $el.addClass('model-signature');
 
         $el.append(tpl.getSignatureSelect(id));
@@ -212,10 +216,16 @@ App.Views.ModelSignature = Backbone.View.extend({
 
         if (model.errorResponses) {
             $el.append(tpl.getResponseErrors(id));
-
             var errors = new App.Views.Errors({model: model});
             $el.find('.response-errors').append(errors.render().el);
         }
+
+        if (model.httpMethod.toLowerCase() == "post" || model.httpMethod.toLowerCase() == "put") {
+            $el.append(tpl.getModelObject(id));
+            var errors = new App.Views.ModelObject({model: model});
+            $el.find('.model-object').append(errors.render().el);
+        }
+
         return this;
     }
 });
@@ -285,6 +295,28 @@ App.Views.Errors = Backbone.View.extend({
     }
 });
 
+App.Views.ModelObject = Backbone.View.extend({
+    tagName: 'div',
+    render: function () {
+        var $el = $(this.el);
+        var model = this.model;
+
+        $el.addClass('objects');
+        $el.append('<pre></pre>')
+
+        model.parameters.forEach(function (parameter) {
+            var clazz = parameter.dataType;
+            $el.find('pre').append('Class name: ' + clazz + '\n');
+            if (clazz.toLowerCase().indexOf('list') == 0) {
+                'List[User]'
+                clazz = clazz.substring(5, clazz.length - 1)
+            }
+            $el.find('pre').append('Class value: ' + JsonUtil.getClassAsFormatJsonString(clazz) + '\n' + '\n')
+        })
+        return this;
+    }
+});
+
 
 App.Views.Form = Backbone.View.extend({
     tagName: 'div',
@@ -293,20 +325,15 @@ App.Views.Form = Backbone.View.extend({
         var model = this.model;
         var id = this.options.idOperation;
         var names = new Array();
-
         $el.append(tpl.getForm());
-
         if (model.parameters) {
             model.parameters.forEach(function (parameter) {
                 $el.find('tbody').append(tpl.getRowTable(parameter))
                 names.push(parameter.name);
             });
         }
-
         $el.find('form').attr({id: id + 'form'})
-
         new App.Views.FormSubmit({model: this.model, idOperation: id, names: names});
-        //new App.Views.FormSubmit();
         return this;
     }
 });
@@ -320,44 +347,47 @@ App.Views.FormSubmit = Backbone.View.extend({
     el: 'body',
     submit: function (e) {
         e.preventDefault();
-        console.log('submit')
         var that = this;
         var id = this.options.idOperation;
         var model = this.model;
 
         var error_free = true;
 
-        $('#' + id + ' form.sandbox input.required').each(function () {
+        (new Array('input', 'select', 'textarea')).forEach(function(element){
+            $('#' + id + ' form.sandbox ' + element + '.required').each(function () {
+                $(this).removeClass('error');
+                if ($(this).val() == '') {
+                    $(this).addClass('error');
+                    //$(this).wiggle();
+                    error_free = false;
+                }
+            });
+        })
 
-            $(this).removeClass('error');
-            if ($(this).val() == '') {
-                $(this).addClass('error');
-                //$(this).wiggle();
-                error_free = false;
-            }
-        });
-        console.log(error_free)
         if (error_free) {
             var values = {}
             var isErrors = false;
 
             if (this.options.names) {
                 this.options.names.forEach(function (name) {
-                    console.log($('#' + id + ' form.sandbox input[name=' + name + ']').val())
-                    if ($('#' + id + ' form.sandbox input[name=' + name + ']').val()) {
-                        values[name] = $('#' + id + ' form.sandbox input[name=' + name + ']').val();
-                    } else {
+                    if ($('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val()) {
+                        values[name] = $('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val();
+                    } else if ($('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()) {
+                        values[name] = $('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val();
+                    } else if ($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val()) {
                         try {
-                            values[name] = JSON.parse($('#' + id + ' form.sandbox textarea[name=' + name + ']').val());
+                            values[name] = JSON.parse($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val());
                         }
                         catch (e) {
-                            Message.addError('invalid json format');
+                            Message.addError('Invalid json format. Please, check your entered data!');
+                            $.sticker({note: 'Invalid json format.<br/>Please, check your entered data', className: 'stick-error'});
                             isErrors = true;
                         }
                     }
                 })
             }
             if (!isErrors) {
+                JsonUtil.validateModel(model, values);
                 new App.Views.Response({idOperation: id, operation: model, values: values});
             }
         }
@@ -378,27 +408,37 @@ App.Views.Response = Backbone.View.extend({
 
         if (operation.parameters) {
             operation.parameters.forEach(function (parameter) {
-                var value = values[parameter.name]
+                var value = encodeURIComponent(values[parameter.name])
 
                 if (parameter.paramType == 'path') {
+
                     path = path.replace("\{" + parameter.name + "\}", value);
+
                 } else if (parameter.paramType == 'query') {
+
                     if (path.indexOf('?') < 0) {
                         path = path + '?' + parameter.name + '=' + value;
                     } else {
                         path = path + '&' + parameter.name + '=' + value;
                     }
+
                 } else if (parameter.paramType == 'body') {
-                    console.log(value)
-                    thisView.model.set(value);
+
+                    console.log(parameter)
+                    thisView.model.set(values[parameter.dataType]);
+                    //this.model.set(JsonUtil.getFirstElement(values));
+
+                } else if (parameter.paramType == 'header') {
+
+                } else if (parameter.paramType == 'form') {
+
                 }
 
             });
         }
+
         this.model.urlRoot = path;
 
-        console.log(path)
-        console.log(this.model)
 
         var thatModel = this.model
 
@@ -426,7 +466,7 @@ App.Views.Response = Backbone.View.extend({
         var xhr = this.xhr;
         var operation = this.options.operation;
 
-        console.log(xhr)
+        //console.log(xhr)
 
         var response = {};
         response.requestURL = model.urlRoot;
@@ -474,87 +514,6 @@ App.Views.ResponseClass = Backbone.View.extend({
 //
 //        $(this.el).html(cont);
 //        console.log(this.el)
-//        return this;
-//    }
-//});
-
-//App.Views.ApiAccordion = Backbone.View.extend({
-//    tagName: 'div',
-//    render: function () {
-//
-//        var buffer;
-//
-//        buffer = '<div class="accordion-api">';
-//
-//        this.model.get('apis').forEach(function (api) {
-//            buffer += '<h3>';
-//
-//            console.log(tpl.getHeading(api));
-//
-//            buffer += tpl.getHeading(api);
-//            buffer += '</h3>';
-//
-//            buffer += '<div><p>';
-//            var accordionContent = new App.Views.AccordionContent({model: api});
-//            buffer += accordionContent.render().el.outerHTML;
-//            buffer += '</p></div>';
-//
-//        });
-//
-//        buffer += '</div>';
-//
-//        console.log(buffer);
-//        $(this.el).html(buffer);
-//
-//        return this;
-//    }
-//});
-
-
-//App.Views.AccordionContent = Backbone.View.extend({
-//    tagName: 'div',
-//    render: function () {
-//
-//        console.log(this.model)
-//
-//
-////        var buffer;
-////
-////
-////        this.model.get('apis').forEach(function(api){
-////            buffer += '<h3>';
-////            buffer += api.path;
-////            buffer += '</h3>';
-////
-////            buffer += '<div><p>';
-////            buffer += api.path;
-////            buffer += '</p></div>';
-////
-////        });
-////
-////        buffer += '</div>';
-//
-////        console.log(buffer);
-////        $(this.el).html(buffer);
-//
-//        return this;
-//    }
-//});
-
-
-///*
-// |---------------------------------------------------
-// | Single Task View
-// |---------------------------------------------------
-// */
-//
-//App.Views.Task = Backbone.View.extend({
-//    tagName: 'tr',
-//
-//    template: App.template('taskTemplate'),
-//
-//    render: function () {
-//        this.$el.html(this.template(this.model.toJSON()));
 //        return this;
 //    }
 //});
@@ -624,43 +583,6 @@ App.Views.ResponseClass = Backbone.View.extend({
 //
 //});
 //
-//
-//window.TaskListView = Backbone.View.extend({
-//
-//    tagName: 'ul',
-//
-//    initialize: function () {
-//        this.model.bind("reset", this.render, this);
-//        var self = this;
-//        this.model.bind("add", function (task) {
-//            $(self.el).append(new TaskListItemView({model: task}).render().el);
-//        });
-//    },
-//
-//    render: function (eventName) {
-//        _.each(this.model.models, function (task) {
-//            $(this.el).append(new TaskListItemView({model: task}).render().el);
-//        }, this);
-//        return this;
-//    }
-//});
-//
-//window.TaskListItemView = Backbone.View.extend({
-//
-//    tagName: "li",
-//
-//    initialize: function () {
-//        this.template = _.template(tpl.get('task-list-item'));
-//        this.model.bind("change", this.render, this);
-//        this.model.bind("destroy", this.close, this);
-//    },
-//
-//    render: function (eventName) {
-//        $(this.el).html(this.template(this.model.toJSON()));
-//        return this;
-//    }
-//
-//});
 
 //App.Views.App = Backbone.View.extend({
 //    initialize: function () {
@@ -681,60 +603,7 @@ App.Views.ResponseClass = Backbone.View.extend({
 //
 //}
 //
-///*
-// |---------------------------------------------------
-// |  URL Settings
-// |---------------------------------------------------
-// */
-//
-//App.Views.AddUrlSettings = Backbone.View.extend({
-//    initialize: function () {
-//        this.discoveryUrl = $('#input_baseUrl');
-//        this.apiKey = $('#input_apiKey');
-//
-//        console.log('initialize AddUrlSettings');
-//        //this.init(null)
-//    },
-//    el: '#api_selector',
-//    events: {
-//        'submit': 'init'
-//    },
-//    init: function (e) {
-//        e.preventDefault();
-//        this.model.set({
-//            discoveryUrl: this.discoveryUrl.val(),
-//            apiKey: this.apiKey.val()
-//        });
-//        console.log(App.URLSettings);
-//    },
-//    render: function() {
-//
-//    }
-//});
 
-/*
- |---------------------------------------------------
- |  URL Settings
- |---------------------------------------------------
- */
-//App.Views.ApiDoc = Backbone.View.extend({
-//    el: '#api_selector',
-//    events: {
-//        'submit': 'init'
-//    },
-//    init: function (e) {
-//        e.preventDefault();
-//        App.ApiDoc.urlRoot = this.model.get('discoveryUrl');
-//        App.ApiDoc.fetch();
-//        console.log(App.ApiDoc);
-//
-//        var mas = App.ApiDoc.toJSON();
-//        console.log(mas);
-//    }
-//});
-
-
-//Add task view
 
 //App.Views.AddTask = Backbone.View.extend({
 //
@@ -769,32 +638,7 @@ App.Views.ResponseClass = Backbone.View.extend({
 //    }
 //});
 //
-///*
-// |---------------------------------------------------
-// |  All Tasks View
-// |---------------------------------------------------
-// */
-//App.Views.Tasks = Backbone.View.extend({
-//
-//    initialize: function() {
-//        this.collection.on('add', this.addOne, this);
-//    },
-//
-//    tagName: 'tbody',
-//
-//    render: function () {
-//        this.collection.each(this.addOne, this);
-//
-//        return this;
-//    },
-//
-//    addOne: function (task) {
-//        var taskView = new App.Views.Task({ model: task });
-//        console.log(taskView.render().el);
-//        this.$el.append(taskView.render().el);
-//    }
-//});
-//
+
 ///*
 // |---------------------------------------------------
 // | Single Task View

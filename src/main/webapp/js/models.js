@@ -37,7 +37,7 @@ App.Models.Response = Backbone.Model.extend({
     sync: function (method, options) {
         var that = this;
         var crud = this.methodToURL[method.toLowerCase()];
-
+        //console.log(options)
         options = options || {};
 
         options.url = this.urlRoot;

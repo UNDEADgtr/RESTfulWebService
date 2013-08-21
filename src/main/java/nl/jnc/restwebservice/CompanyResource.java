@@ -2,6 +2,7 @@ package nl.jnc.restwebservice;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.ws.rs.DELETE;
@@ -33,41 +34,50 @@ public class CompanyResource {
 
             user.put("id", 1);
             user.put("username", "user1");
-            user.put("firstName", "first name 1");
-            user.put("lastName", "last name 1");
             user.put("email", "email1@test.com");
             user.put("password", "XXXXXXXXXXX");
             user.put("phone", "123-456-7890");
             user.put("userStatus", 1);
             user.put("access", true);
+            user.put("dateReg", "2013-08-01");
 
             users.put("1", user);
 
             user = new JSONObject();
             user.put("id", 2);
             user.put("username", "user2");
-            user.put("firstName", "first name 2");
-            user.put("lastName", "last name 2");
             user.put("email", "email2@test.com");
             user.put("password", "XXXXXXXXXXX");
             user.put("phone", "123-456-7890");
             user.put("userStatus", 2);
             user.put("access", false);
+            user.put("dateReg", "2013-08-02");
 
             users.put("2", user);
 
             user = new JSONObject();
             user.put("id", 3);
             user.put("username", "user3");
-            user.put("firstName", "first name 3");
-            user.put("lastName", "last name 3");
             user.put("email", "email3@test.com");
             user.put("password", "XXXXXXXXXXX");
             user.put("phone", "123-456-7890");
             user.put("userStatus", 3);
             user.put("access", true);
+            user.put("dateReg", "2013-08-03");
 
             users.put("3", user);
+
+            user = new JSONObject();
+            user.put("id", 4);
+            user.put("username", "user4");
+            user.put("email", "email1@test.com");
+            user.put("password", "XXXXXXXXXXX");
+            user.put("phone", "444-444-4444");
+            user.put("userStatus", 1);
+            user.put("access", true);
+            user.put("dateReg", "2013-08-01");
+
+            users.put("4", user);
         }
     }
 
@@ -135,20 +145,31 @@ public class CompanyResource {
     @Formatted
     @Path("/users/")
     @Produces(MediaType.APPLICATION_JSON)
-    public JSONObject readUser(@QueryParam("username") boolean access, @QueryParam("email") String email, @QueryParam("userStatus") int userStatus) throws Exception {
+    public Object readUser(@QueryParam("access") boolean access,
+                           @QueryParam("email") String email,
+                           @QueryParam("userStatus") int userStatus,
+                           @QueryParam("dateReg") String dateReg) throws Exception {
         String msg = String.format("Get user configuration for access=%s, email=%s, userStatus=%s", access, email, userStatus);
         try {
-            JSONObject user = null;
+            JSONArray us = new JSONArray();
+
             for (Object object : users.entrySet()) {
                 Map.Entry entry = (Map.Entry) object;
                 JSONObject u = (JSONObject) entry.getValue();
-                if (u.get("access").equals(access) && u.get("email").equals(email) && u.get("userStatus").equals(userStatus)) {
-                    user = u;
-                    break;
+                boolean access1 = (Boolean) (u.get("access") != null ? u.get("access"): false);
+                String email1 = (String) u.get("email");
+                int userStatus1 = (Integer) u.get("userStatus");
+                String dateReg1 = (String) u.get("dateReg");
+
+                if (access1 == access &&
+                        email1.equals(email) &&
+                        userStatus1 == userStatus &&
+                        (dateReg.equals("undefined") || dateReg1.equals(dateReg))) {
+                    us.add(u);
                 }
             }
 
-            if (user == null) {
+            if (us == null || us.size() == 0) {
                 JSONObject error = new JSONObject();
                 error.put("type", "error");
                 error.put("code", 404);
@@ -156,23 +177,7 @@ public class CompanyResource {
                 return error;
             }
             //return Response.status(200).entity(user).build();
-            return user;
-        } catch (Exception e) {
-            logger.error(msg, e);
-            throw new Exception(e);
-        }
-    }
-
-    @GET
-    @Formatted
-    @Path("/user/login")
-    @Produces(MediaType.APPLICATION_JSON)
-    public JSONObject readUserByLogin(@QueryParam("username") String username,
-                                      @QueryParam("password") String password) throws Exception {
-        String msg = String.format(
-                "Get user configuration for username=%s and password=%s", username, password);
-        try {
-            return readUser(username);// "User: " + username + ", Password: " + password;
+            return us;
         } catch (Exception e) {
             logger.error(msg, e);
             throw new Exception(e);
@@ -185,6 +190,23 @@ public class CompanyResource {
     @Produces(MediaType.APPLICATION_JSON)
     public JSONObject create(JSONObject object) throws Exception {
         String msg = String.format("Get Company configuration for companyId=%s", object.toJSONString());
+        try {
+            object.put("id", newId);
+            users.put(newId, object);
+            newId++;
+            return object;
+        } catch (Exception e) {
+            logger.error(msg, e);
+            throw new Exception(e);
+        }
+    }
+
+    @POST
+    @Formatted
+    @Path("/user/createWithList")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JSONObject createList(JSONObject object) throws Exception {
+        String msg = String.format("Create lest: %s", object.toJSONString());
         try {
             object.put("id", newId);
             users.put(newId, object);

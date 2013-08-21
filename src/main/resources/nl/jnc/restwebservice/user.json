@@ -1,6 +1,6 @@
 {   "apiVersion": "0.2",
     "swaggerVersion": "1.1",
-    "basePath": "http://petstore.swagger.wordnik.com/api",
+    "basePath": "http://localhost:8080/RESTfulWebService/api",
     "resourcePath": "/user",
     "apis": [
         {
@@ -57,6 +57,42 @@
                             "dataType": "string",
                             "paramType": "query",
                             "allowMultiple": false
+                        },
+                        {
+                            "name": "email",
+                            "description": "Users email",
+                            "required": false,
+                            "allowableValues": {
+                                "values": ["email0@test.com", "email1@test.com", "email2@test.com", "email3@test.com", "email4@test.com"],
+                                "valueType": "LIST"
+                            },
+                            "dataType": "string",
+                            "paramType": "query",
+                            "allowMultiple": false
+                        },
+                        {
+                            "name": "userStatus",
+                            "description": "User status",
+                            "defaultValue": "3",
+                            "required": false,
+                            "allowableValues": {
+                                "values": ["1", "2", "3"],
+                                "valueType": "LIST"
+                            },
+                            "dataType": "string",
+                            "paramType": "query",
+                            "allowMultiple": false
+                        },
+                        {
+                            "name": "dateReg",
+                            "description": "User date registration",
+                            "required": false,
+                            "allowableValues": {
+                                "valueType": "DATE"
+                            },
+                            "dataType": "string",
+                            "paramType": "query",
+                            "allowMultiple": false
                         }
                     ],
                     "errorResponses": [
@@ -67,42 +103,6 @@
                         {
                             "code": 404,
                             "reason": "User not found"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "path": "/user/login",
-            "description": "Operations about user",
-            "operations": [
-                {
-                    "httpMethod": "GET",
-                    "summary": "Logs user into the system",
-                    "responseClass": "string",
-                    "nickname": "loginUser",
-                    "parameters": [
-                        {
-                            "name": "username",
-                            "description": "The user name for login",
-                            "paramType": "query",
-                            "required": true,
-                            "allowMultiple": false,
-                            "dataType": "string"
-                        },
-                        {
-                            "name": "password",
-                            "description": "The password for login in clear text",
-                            "paramType": "query",
-                            "required": true,
-                            "allowMultiple": false,
-                            "dataType": "string"
-                        }
-                    ],
-                    "errorResponses": [
-                        {
-                            "code": 400,
-                            "reason": "Invalid username and password combination"
                         }
                     ]
                 }
@@ -238,7 +238,9 @@
                 "type": "string"
             },
             "username": {
-                "type": "string"
+                "type": "string",
+                "uniqueItems": false,
+                "required": true
             },
             "email": {
                 "type": "string"

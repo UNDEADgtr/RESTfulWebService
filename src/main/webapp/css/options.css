@@ -127,7 +127,32 @@ pre code {
     text-decoration: none;
 }
 
+/*-----------------------------------------   MODEL OBJECT   ----------------------------------------------------*/
 
+.model-object {
+    font-family: "Droid Sans", sans-serif;
+    font-size: 1em;
+    line-height: 1.5em;
+}
+
+.model-object .objects {
+    clear: both;
+}
+
+.model-object a {
+    text-decoration: none;
+    color: #d3d3d3;
+}
+
+.model-object a:hover {
+    text-decoration: underline;
+    color: black;
+}
+
+.model-object .selected {
+    color: #000000;
+    text-decoration: none;
+}
 
 /*-------------------------------------------   HEADING GET    -----------------------------------------------------*/
 
@@ -443,7 +468,7 @@ body div#ui-container div#resources div.operations div.content.get h4 {
     padding: 15px 0 5px;
 }
 
-body div#ui-container div#resources div.operations div.content.get form input[type='text'].error {
+body div#ui-container div#resources div.operations div.content.get form .error {
     outline: 2px solid black;
     outline-color: #cc0000;
 }
@@ -495,7 +520,7 @@ body div#ui-container div#resources div.operations div.content.post h4 {
     padding: 15px 0 5px;
 }
 
-body div#ui-container div#resources div.operations div.content.post form input[type='text'].error {
+body div#ui-container div#resources div.operations div.content.post form .error {
     outline: 2px solid black;
     outline-color: #cc0000;
 }
@@ -547,7 +572,7 @@ body div#ui-container div#resources div.operations div.content.put h4 {
     padding: 15px 0 5px;
 }
 
-body div#ui-container div#resources div.operations div.content.put form input[type='text'].error {
+body div#ui-container div#resources div.operations div.content.put form .error {
     outline: 2px solid black;
     outline-color: #cc0000;
 }
@@ -599,7 +624,7 @@ body div#ui-container div#resources div.operations div.content.delete h4 {
     padding: 15px 0 5px;
 }
 
-body div#ui-container div#resources div.operations div.content.delete form input[type='text'].error {
+body div#ui-container div#resources div.operations div.content.delete form .error {
     outline: 2px solid black;
     outline-color: #cc0000;
 }
@@ -633,3 +658,21 @@ body div#ui-container div#resources div.operations div.content.delete div.respon
     overflow-y: auto;
 }
 
+/*---------------------------------------------  STICK  -------------------------------------------------------*/
+
+.stick {
+    margin: 5px;
+    padding: 15px;
+    width: 250px;
+}
+
+.stick-error {
+    border: 1px solid #E2365C;
+    background-color: #F7C8D2;
+}
+
+.stick-classic {
+    border: 1px solid #A7CD10;
+    background-color: #E1FAB8;
+    border-radius: 10px;
+}
