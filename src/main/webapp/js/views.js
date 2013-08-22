@@ -54,8 +54,14 @@ App.Views.ApiDoc = Backbone.View.extend({
     initialize: function () {
         var thisView = this
         this.model.fetch().done(function () {
-            App.basePath = App.ApiDoc.get('basePath');
-            thisView.render()
+            var errors = Validation.apiDocs(thisView.model.toJSON());
+            if(!errors){
+                App.basePath = App.ApiDoc.get('basePath');
+                thisView.render()
+            } else {
+                Message.addStickerErrorsAsMany(errors);
+                Message.addError('Content api-docs is invalid.')
+            }
         });
     },
     render: function () {
@@ -141,7 +147,7 @@ App.Views.Operations = Backbone.View.extend({
 
         JsonUtil.models = this.model.get('models');
 
-        //console.log(this.model.get('models'))
+        //console.log(this.model)
 
         this.model.get('apis').forEach(function (api) {
             var i = 1;
@@ -306,6 +312,7 @@ App.Views.ModelObject = Backbone.View.extend({
 
         model.parameters.forEach(function (parameter) {
             var clazz = parameter.dataType;
+            $el.find('pre').append('Name: ' + parameter.name + '\n');
             $el.find('pre').append('Class name: ' + clazz + '\n');
             if (clazz.toLowerCase().indexOf('list') == 0) {
                 'List[User]'
@@ -324,16 +331,19 @@ App.Views.Form = Backbone.View.extend({
         var $el = $(this.el);
         var model = this.model;
         var id = this.options.idOperation;
-        var names = new Array();
+        var parameters = new App.Collections.Parameters();
         $el.append(tpl.getForm());
         if (model.parameters) {
             model.parameters.forEach(function (parameter) {
                 $el.find('tbody').append(tpl.getRowTable(parameter))
-                names.push(parameter.name);
+                parameters.add(new App.Models.Parameter({
+                    name: parameter.name,
+                    type: parameter.dataType,
+                    classEntity: JsonUtil.getClassAsJson(parameter.dataType)}));
             });
         }
         $el.find('form').attr({id: id + 'form'})
-        new App.Views.FormSubmit({model: this.model, idOperation: id, names: names});
+        new App.Views.FormSubmit({model: this.model, idOperation: id, parameters: parameters});
         return this;
     }
 });
@@ -353,7 +363,7 @@ App.Views.FormSubmit = Backbone.View.extend({
 
         var error_free = true;
 
-        (new Array('input', 'select', 'textarea')).forEach(function(element){
+        (new Array('input', 'select', 'textarea')).forEach(function (element) {
             $('#' + id + ' form.sandbox ' + element + '.required').each(function () {
                 $(this).removeClass('error');
                 if ($(this).val() == '') {
@@ -368,26 +378,43 @@ App.Views.FormSubmit = Backbone.View.extend({
             var values = {}
             var isErrors = false;
 
-            if (this.options.names) {
-                this.options.names.forEach(function (name) {
+            if (this.options.parameters) {
+                this.options.parameters.forEach(function (parameter) {
+
+                    var name = parameter.get('name');
+
                     if ($('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val()) {
                         values[name] = $('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val();
+                        parameter.set({value: $('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val()}, {validate: true})
                     } else if ($('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()) {
                         values[name] = $('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val();
+                        parameter.set({value: $('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()}, {validate: true})
                     } else if ($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val()) {
                         try {
                             values[name] = JSON.parse($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val());
+                            parameter.set({value: JSON.parse($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val())}, {validate: true})
                         }
                         catch (e) {
                             Message.addError('Invalid json format. Please, check your entered data!');
-                            $.sticker({note: 'Invalid json format.<br/>Please, check your entered data', className: 'stick-error'});
+                            Message.addStickerError('Invalid json format.<br/>Please, check your entered data');
+                            isErrors = true;
+                        }
+                    }
+                    if (parameter.validationError) {
+                        if (parameter.validationErrors) {
+                            Message.addStickerErrorsAsOne(parameter.validationErrors)
+                            isErrors = true;
+                        } else {
+                            Message.addStickerError(parameter.validationError);
                             isErrors = true;
                         }
                     }
                 })
+
             }
             if (!isErrors) {
-                JsonUtil.validateModel(model, values);
+                //JsonUtil.validateModel(model, values);
+                //console.log(values)
                 new App.Views.Response({idOperation: id, operation: model, values: values});
             }
         }
@@ -400,6 +427,8 @@ App.Views.Response = Backbone.View.extend({
         var thisView = this;
         var operation = this.options.operation;
         var values = this.options.values;
+
+        console.log(operation)
 
         var path = '';
 
@@ -424,7 +453,7 @@ App.Views.Response = Backbone.View.extend({
 
                 } else if (parameter.paramType == 'body') {
 
-                    console.log(parameter)
+                    //console.log(parameter)
                     thisView.model.set(values[parameter.dataType]);
                     //this.model.set(JsonUtil.getFirstElement(values));
 

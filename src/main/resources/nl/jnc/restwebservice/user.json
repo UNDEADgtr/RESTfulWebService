@@ -231,8 +231,8 @@
             "id": {
                 "type": "long"
             },
-            "lastName": {
-                "type": "string"
+            "dateReg": {
+                "type": "Date"
             },
             "phone": {
                 "type": "string"
@@ -252,10 +252,10 @@
                     "valueType": "LIST"
                 },
                 "description": "User Status",
-                "type": "int"
+                "type": "integer"
             },
-            "firstName": {
-                "type": "string"
+            "access": {
+                "type": "boolean"
             },
             "password": {
                 "type": "string"

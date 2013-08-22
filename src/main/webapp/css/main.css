@@ -184,3 +184,23 @@ body #header form#api_selector .input a#explore:hover {
     font-variant: small-caps;
 }
 
+/*---------------------------------------------  STICK  -------------------------------------------------------*/
+
+.stick {
+    margin: 5px;
+    padding: 15px;
+    width: 250px;
+}
+
+.stick-error {
+    border: 1px solid #E2365C;
+    background-color: #F7C8D2;
+    border-radius: 10px;
+}
+
+.stick-classic {
+    border: 1px solid #A7CD10;
+    background-color: #E1FAB8;
+    border-radius: 10px;
+}
+

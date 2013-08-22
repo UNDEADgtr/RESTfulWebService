@@ -120,7 +120,7 @@ public class CompanyResource {
             for (Object object : users.entrySet()) {
                 Map.Entry entry = (Map.Entry) object;
                 JSONObject u = (JSONObject) entry.getValue();
-                if (u.get("username").equals(username)) {
+                if (u.get("username") != null && u.get("username").equals(username)) {
                     user = u;
                     break;
                 }
@@ -156,7 +156,7 @@ public class CompanyResource {
             for (Object object : users.entrySet()) {
                 Map.Entry entry = (Map.Entry) object;
                 JSONObject u = (JSONObject) entry.getValue();
-                boolean access1 = (Boolean) (u.get("access") != null ? u.get("access"): false);
+                boolean access1 = (Boolean) (u.get("access") != null ? u.get("access") : false);
                 String email1 = (String) u.get("email");
                 int userStatus1 = (Integer) u.get("userStatus");
                 String dateReg1 = (String) u.get("dateReg");
