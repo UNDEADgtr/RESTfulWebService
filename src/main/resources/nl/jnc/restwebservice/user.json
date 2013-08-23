@@ -12,6 +12,7 @@
                     "summary": "Get user by user name",
                     "responseClass": "User",
                     "nickname": "getUserByName",
+                    "notes": "Returns a user based on username",
                     "parameters": [
                         {
                             "name": "username",
@@ -86,6 +87,7 @@
                         {
                             "name": "dateReg",
                             "description": "User date registration",
+                            "defaultValue": "2013-08-01",
                             "required": false,
                             "allowableValues": {
                                 "valueType": "DATE"
@@ -224,42 +226,43 @@
                 }
             ]
         }
-    ], "models": {
-    "User": {
-        "id": "User",
-        "properties": {
-            "id": {
-                "type": "long"
-            },
-            "dateReg": {
-                "type": "Date"
-            },
-            "phone": {
-                "type": "string"
-            },
-            "username": {
-                "type": "string",
-                "uniqueItems": false,
-                "required": true
-            },
-            "email": {
-                "type": "string"
-            },
-            "userStatus": {
-                "allowableValues": {
-                    "valueType": "LIST",
-                    "values": ["1-registered", "2-active", "3-closed"],
-                    "valueType": "LIST"
+    ],
+    "models": {
+        "User": {
+            "id": "User",
+            "properties": {
+                "id": {
+                    "type": "long"
                 },
-                "description": "User Status",
-                "type": "integer"
-            },
-            "access": {
-                "type": "boolean"
-            },
-            "password": {
-                "type": "string"
+                "dateReg": {
+                    "type": "Date"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string",
+                    "uniqueItems": false,
+                    "required": true
+                },
+                "email": {
+                    "type": "string"
+                },
+                "userStatus": {
+                    "allowableValues": {
+                        "valueType": "LIST",
+                        "values": ["1-registered", "2-active", "3-closed"],
+                        "valueType": "LIST"
+                    },
+                    "description": "User Status",
+                    "type": "integer"
+                },
+                "access": {
+                    "type": "boolean"
+                },
+                "password": {
+                    "type": "string"
+                }
             }
         }
-    }
-}}
+    }}

@@ -6,6 +6,10 @@
         {
             "path": "/user",
             "description": ""
+        },
+        {
+            "path": "/wordList",
+            "description": ""
         }
     ]
 }

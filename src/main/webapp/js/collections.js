@@ -7,6 +7,7 @@ App.Collections.Apis = Backbone.Collection.extend({
 
 App.Collections.Parameters = Backbone.Collection.extend({
     model:App.Models.Parameter,
+    operation : {},
     getModel: function(modelName){
 
     }

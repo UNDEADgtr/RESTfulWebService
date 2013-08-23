@@ -79,7 +79,7 @@ function validateSimpleParameters(type, value) {
         }
         case 'boolean':
         {
-            if (value != 'true' && value != 'false') {
+            if (value != true && value != false && value != 'true' && value != 'false') {
                 return false;
             }
             break;

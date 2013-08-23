@@ -20,6 +20,10 @@ pre code {
     line-height: 1.6em;
 }
 
+.operations pre{
+    overflow-y: auto;
+}
+
 
 /*-------------------------------------------   MODEL-SIGNATURE    -----------------------------------------------------*/
 

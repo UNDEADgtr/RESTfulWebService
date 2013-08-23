@@ -30,8 +30,8 @@ var JsonUtil = {
     },
     getClassAsJson: function (clazz) {
         var models = this.models;
-        if(clazz.indexOf('[') >= 0){
-            clazz = clazz.substring(clazz.indexOf('[') + 1,clazz.indexOf(']'));
+        if (clazz.indexOf('[') >= 0) {
+            clazz = clazz.substring(clazz.indexOf('[') + 1, clazz.indexOf(']'));
             //console.log(clazz)
         }
 
@@ -42,55 +42,55 @@ var JsonUtil = {
         }
         return null
     },
-    validateModel: function (model, values) {
-        var models = this.models;
-        var isValid = true;
-
-        for (var name in values) {
-
-            model.parameters.forEach(function (parameter) {
-                if (parameter.name == name || parameter.dataType == name) {
-
-                    //console.log(parameter.dataType)
-                    //console.log(models[parameter.dataType])
-
-                    if(parameter.dataType in models){
-
-
-                        //console.log('123');
-                        var modelObject = models[name];
-
-
-
-
-                    }
-                }
-            })
-        }
-
-//        for(var k in result) {
-//            console.log(k, result[k]);
-//        }
-
-        for (var clazzName in models) {
-//            if (clazz == clazzName) {
+//    validateModel: function (model, values) {
+//        var models = this.models;
+//        var isValid = true;
 //
-//                var properties = models[clazzName].properties;
-//                var data = { };
-//                for (var name in properties) {
-//                    data[name] = properties[name].type;
+//        for (var name in values) {
+//
+//            model.parameters.forEach(function (parameter) {
+//                if (parameter.name == name || parameter.dataType == name) {
+//
+//                    //console.log(parameter.dataType)
+//                    //console.log(models[parameter.dataType])
+//
+//                    if(parameter.dataType in models){
+//
+//
+//                        //console.log('123');
+//                        var modelObject = models[name];
+//
+//
+//
+//
+//                    }
 //                }
-//                var result = {};
-//                result[clazzName] = data;
+//            })
+//        }
 //
-//                return true
-//            }
-        }
-        return isValid;
-    },
+////        for(var k in result) {
+////            console.log(k, result[k]);
+////        }
+//
+//        for (var clazzName in models) {
+////            if (clazz == clazzName) {
+////
+////                var properties = models[clazzName].properties;
+////                var data = { };
+////                for (var name in properties) {
+////                    data[name] = properties[name].type;
+////                }
+////                var result = {};
+////                result[clazzName] = data;
+////
+////                return true
+////            }
+//        }
+//        return isValid;
+//    },
     getFirstElement: function (model) {
-        for(var key in model) {
-            if(model.hasOwnProperty(key)) {
+        for (var key in model) {
+            if (model.hasOwnProperty(key)) {
                 return model[key];
             }
         }
@@ -139,33 +139,84 @@ var Validation = {
         return true//a.test(url);
     },
     apiDocs: function (api) {
-//        "apiVersion": "0.2",
-//            "scriptVersion": "1.1",
-//            "basePath": "http://localhost:8080/RESTfulWebService/api",
-//            "apis": [
-//            {
-//                "path": "/user",
-//                "description": ""
-//            }
-//        ]
-        var errors = {}
-        if(!api.apiVersion){
-            errors['apiVersion'] = 'Parameter is mandatory';
+        var errors = this.baseApiValidation(api);
+        if (!errors) {
+            errors = {};
         }
-        if(!api.scriptVersion){
+
+        if (!api.scriptVersion) {
             errors['scriptVersion'] = 'Parameter is mandatory';
         }
-        if(api.basePath){
+
+        return Object.keys(errors).length == 0 ? null : errors;
+    },
+    api: function (api) {
+        var errors = this.baseApiValidation(api);
+        if (!errors) {
+            errors = {};
+        }
+        api.apis.forEach(function (a) {
+
+            a.operations.forEach(function (operation) {
+                //console.log(operation)
+                if (!operation.httpMethod) {
+                    errors['httpMethod'] = 'Parameter is mandatory';
+                }
+                if (!operation.nickname) {
+                    errors['nickname'] = 'Parameter is mandatory';
+                }
+                if (!operation.responseClass) {
+                    errors['responseClass'] = 'Parameter is mandatory';
+                }
+                if (operation.parameters) {
+                    operation.parameters.forEach(function (parameter) {
+                        if (!parameter.dataType) {
+                            errors['dataType'] = 'Parameter is mandatory';
+                        }
+                        if (!parameter.paramType) {
+                            errors['paramType'] = 'Parameter is mandatory';
+                        }
+                    });
+                }
+                if (operation.errorResponses) {
+                    operation.errorResponses.forEach(function (errorResponse) {
+                        if (!errorResponse.code) {
+                            errors['code'] = 'Parameter is mandatory';
+                        }
+                        if (!errorResponse.reason) {
+                            errors['reason'] = 'Parameter is mandatory';
+                        }
+                    });
+                }
+            });
+        })
+        for(var clazz in api.models){
+            for(var key in api.models[clazz].properties){
+                var property = api.models[clazz].properties[key];
+                if (!property.type) {
+                    errors['type'] = 'Parameter is mandatory';
+                }
+            }
+        }
+
+        return Object.keys(errors).length == 0 ? null : errors;
+    },
+    baseApiValidation: function (api) {
+        var errors = {}
+        if (!api.apiVersion) {
+            errors['apiVersion'] = 'Parameter is mandatory';
+        }
+        if (api.basePath) {
 
         } else {
             errors['basePath'] = 'Parameter is mandatory';
         }
-        if(api.apis){
-            if(Object.keys(api.apis).length == 0){
+        if (api.apis) {
+            if (Object.keys(api.apis).length == 0) {
                 errors['apis'] = 'Parameter is empty';
             } else {
-                api.apis.forEach(function(obj){
-                    if(!obj.path){
+                api.apis.forEach(function (obj) {
+                    if (!obj.path) {
                         errors['path'] = 'Parameter is mandatory in "apis"';
                     }
                 });
@@ -191,8 +242,8 @@ var Converter = {
 }
 
 var Types = {
-    simpleTypes : new Array('integer', 'long', 'float', 'double', 'string', 'boolean', 'date', 'dateTime'),
-    collectionTypes : new Array('list', 'array', 'map'),
+    simpleTypes: new Array('integer', 'long', 'float', 'double', 'string', 'boolean', 'date', 'dateTime'),
+    collectionTypes: new Array('list', 'array', 'map'),
     isSimpleTypes: function (name) {
         name = name.toLowerCase();
         return this.simpleTypes.indexOf(name) >= 0;

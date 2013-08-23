@@ -34,6 +34,7 @@ tpl = {
             '<div class="model-object">' +
             '<a class="object-link selected" href="#model" onclick="Docs.showHideModelObject(\'{{id}}\')">Show/Hide</a>' +
             '</div>',
+        'notes': '<h4>Implementation Notes</h4><p>{{notes}}</p>',
 
 
         'form': '<form accept-charset="UTF-8" class="sandbox">' +
@@ -65,9 +66,9 @@ tpl = {
             '</tr>',
         'inputString': '<input class="parameter{{requiredTrue}}" minlength="1" name="{{name}}" placeholder="{{placeholder}}" type="text" value="{{defaultValue}}">',
         'inputList': '' +
-            '<select class="parameter" name="{{name}}" value="{{defaultValue}}">' +
+            '<select class="parameter" name="{{name}}">' +
             '{{#each allowableValues.values}}' +
-            '<option value="{{this}}">{{this}}</option>' +
+            '<option value="{{this}}" {{#ifeq this ../defaultValue}} selected="selected"{{/ifeq}}>{{this}}{{#ifeq this ../defaultValue}} (default){{/ifeq}}</option>' +
             '{{/each}}' +
             '</select>',
         'inputRange': '<input class="parameter{{requiredTrue}}" name="{{name}}" placeholder="{{placeholder}}" type="number" value="{{defaultValue}}" min="{{min}}" max="{{max}}" step="0.1">',
@@ -76,7 +77,7 @@ tpl = {
             '<div><span style="float: right">*json format</span></div>',
 
 
-        'responseHider': '<a href="#" class="response_hider" onclick="Docs.hideResponse(\'{{id}}\')">Hide Response</a>',
+        'responseHider': '<a href="#hidden" class="response_hider" onclick="Docs.hideResponse(\'{{id}}\')">Hide Response</a>',
         'response': '<div class="response">' +
             '<h4>Request URL</h4>' +
             '<div>' +
@@ -173,6 +174,9 @@ tpl = {
     getModelObject: function (id) {
         return Handlebars.compile(this.templatesPattern.modelObject)({id: id});
     },
+    getNotes: function (notes) {
+        return Handlebars.compile(this.templatesPattern.notes)({notes: notes});
+    },
     getForm: function () {
         return Handlebars.compile(this.templatesPattern.form)();
     },
@@ -253,7 +257,7 @@ tpl = {
 
 
     buildResources: function (id) {
-        $("#" + id).tabs();
+        $("#" + id).tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
     },
     buildOperations: function (id) {
         $("." + id).accordion({
@@ -355,3 +359,7 @@ var Docs = {
 
 //$.sticker({note:'Проба',className:'stick-classic'});
 //$.sticker({note:'Это ошибка.',className:'stick-error'});
+
+Handlebars.registerHelper('ifeq', function (a, b, options) {
+    if (a == b) { return options.fn(this); }
+});

@@ -102,6 +102,14 @@ App.Views.UIContainer = Backbone.View.extend({
 
         this.collection.each(function (api) {
 
+            var errors = Validation.api(api.toJSON());
+            if(errors){
+                Message.addStickerErrorsAsMany(errors);
+                Message.addError('Content api is invalid.')
+                return;
+            }
+
+
             var path = Docs.transformResourceName(api.get('resourcePath'));
 
             $el.find('div#resources ul').append(tpl.getResourcesTab(path));
@@ -171,19 +179,24 @@ App.Views.OperationContent = Backbone.View.extend({
 
         var $el = $(this.el);
         var id = this.model.httpMethod + '_' + this.model.nickname;
+        var model = this.model;
 
         $el.attr({id: id})
         $el.addClass('content');
-        $el.addClass(this.model.httpMethod);
+        $el.addClass(model.httpMethod);
+
+        if (model.notes) {
+            $el.append(tpl.getNotes(model.notes));
+        }
 
         $el.append('<h4>Response Class</h4>');
 
-        var modelSignature = new App.Views.ModelSignature({model: this.model, idOperation: id});
+        var modelSignature = new App.Views.ModelSignature({model: model, idOperation: id});
         $el.append(modelSignature.render().el);
 
         $el.append('<br/>');
 
-        var form = new App.Views.Form({model: this.model, idOperation: id});
+        var form = new App.Views.Form({model: model, idOperation: id});
         $el.append(form.render().el);
 
         $el.append('<br/>');
@@ -332,6 +345,7 @@ App.Views.Form = Backbone.View.extend({
         var model = this.model;
         var id = this.options.idOperation;
         var parameters = new App.Collections.Parameters();
+        parameters.operation = this.model;
         $el.append(tpl.getForm());
         if (model.parameters) {
             model.parameters.forEach(function (parameter) {
@@ -339,11 +353,13 @@ App.Views.Form = Backbone.View.extend({
                 parameters.add(new App.Models.Parameter({
                     name: parameter.name,
                     type: parameter.dataType,
-                    classEntity: JsonUtil.getClassAsJson(parameter.dataType)}));
+                    classEntity: JsonUtil.getClassAsJson(parameter.dataType),
+                    paramType: parameter.paramType
+                }));
             });
         }
         $el.find('form').attr({id: id + 'form'})
-        new App.Views.FormSubmit({model: this.model, idOperation: id, parameters: parameters});
+        new App.Views.FormSubmit({/*model: this.model, */idOperation: id, parameters: parameters});
         return this;
     }
 });
@@ -359,7 +375,6 @@ App.Views.FormSubmit = Backbone.View.extend({
         e.preventDefault();
         var that = this;
         var id = this.options.idOperation;
-        var model = this.model;
 
         var error_free = true;
 
@@ -374,8 +389,9 @@ App.Views.FormSubmit = Backbone.View.extend({
             });
         })
 
+        //console.log(this.options.parameters)
+
         if (error_free) {
-            var values = {}
             var isErrors = false;
 
             if (this.options.parameters) {
@@ -384,14 +400,11 @@ App.Views.FormSubmit = Backbone.View.extend({
                     var name = parameter.get('name');
 
                     if ($('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val()) {
-                        values[name] = $('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val();
                         parameter.set({value: $('#' + id + ' form.sandbox input[name=' + Converter.nameToJQueryName(name) + ']').val()}, {validate: true})
                     } else if ($('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()) {
-                        values[name] = $('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val();
                         parameter.set({value: $('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()}, {validate: true})
                     } else if ($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val()) {
                         try {
-                            values[name] = JSON.parse($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val());
                             parameter.set({value: JSON.parse($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val())}, {validate: true})
                         }
                         catch (e) {
@@ -413,9 +426,7 @@ App.Views.FormSubmit = Backbone.View.extend({
 
             }
             if (!isErrors) {
-                //JsonUtil.validateModel(model, values);
-                //console.log(values)
-                new App.Views.Response({idOperation: id, operation: model, values: values});
+                new App.Views.Response({idOperation: id, parameters : this.options.parameters});
             }
         }
     }
@@ -425,54 +436,42 @@ App.Views.FormSubmit = Backbone.View.extend({
 App.Views.Response = Backbone.View.extend({
     initialize: function () {
         var thisView = this;
-        var operation = this.options.operation;
-        var values = this.options.values;
+        var parameters = this.options.parameters;
 
-        console.log(operation)
+        //console.log(parameters)
 
         var path = '';
 
         this.model = new App.Models.Response();
-        path = App.basePath + operation.path;
+        path = App.basePath + parameters.operation.path;
 
-        if (operation.parameters) {
-            operation.parameters.forEach(function (parameter) {
-                var value = encodeURIComponent(values[parameter.name])
+        if (parameters) {
+            parameters.forEach(function (parameter) {
 
-                if (parameter.paramType == 'path') {
+                var parameterAsJson = parameter.toJSON();
 
-                    path = path.replace("\{" + parameter.name + "\}", value);
-
-                } else if (parameter.paramType == 'query') {
-
+                if (parameterAsJson.paramType == 'path') {
+                    path = path.replace("\{" + parameterAsJson.name + "\}", encodeURIComponent(parameterAsJson.value));
+                } else if (parameterAsJson.paramType == 'query') {
                     if (path.indexOf('?') < 0) {
-                        path = path + '?' + parameter.name + '=' + value;
+                        path = path + '?' + parameterAsJson.name + '=' + encodeURIComponent(parameterAsJson.value);
                     } else {
-                        path = path + '&' + parameter.name + '=' + value;
+                        path = path + '&' + parameterAsJson.name + '=' + encodeURIComponent(parameterAsJson.value);
                     }
+                } else if (parameterAsJson.paramType == 'body') {
+                    thisView.model.set(parameterAsJson.value);
+                } else if (parameterAsJson.paramType == 'header') {
 
-                } else if (parameter.paramType == 'body') {
-
-                    //console.log(parameter)
-                    thisView.model.set(values[parameter.dataType]);
-                    //this.model.set(JsonUtil.getFirstElement(values));
-
-                } else if (parameter.paramType == 'header') {
-
-                } else if (parameter.paramType == 'form') {
+                } else if (parameterAsJson.paramType == 'form') {
 
                 }
-
             });
         }
 
         this.model.urlRoot = path;
 
-
-        var thatModel = this.model
-
-        this.model.sync(operation.httpMethod).done(function () {
-            thisView.xhr = thatModel.xhr;
+        this.model.sync(parameters.operation.httpMethod).done(function () {
+            thisView.xhr = thisView.model.xhr;
             thisView.render()
         })
 

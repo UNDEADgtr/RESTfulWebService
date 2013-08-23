@@ -7,4 +7,11 @@ body div#ui-container div#resources div.options {
 
 body div#ui-container div#resources div.raw {
     display: none;
+    height: 700px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+body div#ui-container div#resources div.raw pre {
+    white-space: pre-wrap;
 }

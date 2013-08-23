@@ -133,6 +133,84 @@
 }
 
 
+/*!*/
+ /** jQuery UI Tabs 1.10.3*/
+ /** http://jqueryui.com*/
+ /***/
+ /** Copyright 2013 jQuery Foundation and other contributors*/
+ /** Released under the MIT license.*/
+ /** http://jquery.org/license*/
+ /***/
+ /** http://docs.jquery.com/UI/Tabs#theming*/
+ /**/
+/*.ui-tabs {*/
+    /*position: relative;*//* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+    /*padding-left: 8.5em;*/
+    /*min-height: 20em;*/
+/*}*/
+/*.ui-tabs .ui-tabs-nav {*/
+    /*margin: 0;*/
+    /*position: absolute;*/
+    /*left: 0.25em;*/
+    /*top: 0.25em;*/
+    /*bottom: 0.25em;*/
+    /*width: 8em;*/
+    /*padding: 0.2em 0 0.2em 0.2em;*/
+/*}*/
+/*.ui-tabs .ui-tabs-nav li {*/
+    /*list-style: none;*/
+    /*float: left;*/
+    /*position: relative;*/
+    /*top: 0;*/
+    /*margin: 1px .2em 0 0;*/
+    /*padding: 0;*/
+    /*white-space: nowrap;*/
+    /*right: 1px;*/
+    /*width: 100%;*/
+    /*border-right: none;*/
+    /*border-bottom-width: 1px !important;*/
+    /*-moz-border-radius: 4px 0px 0px 4px;*/
+    /*-webkit-border-radius: 4px 0px 0px 4px;*/
+    /*border-radius: 4px 0px 0px 4px;*/
+    /*overflow: hidden;*/
+/*}*/
+/*.ui-tabs .ui-tabs-nav li a {*/
+    /*float: right;*/
+    /*padding: .5em 1em;*/
+    /*text-decoration: none;*/
+    /*width: 100%;*/
+    /*text-align: right;*/
+/*}*/
+/*.ui-tabs .ui-tabs-nav li.ui-tabs-active {*/
+    /*margin-bottom: -1px;*/
+    /*padding-bottom: 1px;*/
+/*}*/
+/*.ui-tabs .ui-tabs-nav li.ui-tabs-active a,*/
+/*.ui-tabs .ui-tabs-nav li.ui-state-disabled a,*/
+/*.ui-tabs .ui-tabs-nav li.ui-tabs-loading a {*/
+    /*cursor: text;*/
+/*}*/
+/*.ui-tabs .ui-tabs-nav li a, *//* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
+/*.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active a {*/
+    /*cursor: pointer;*/
+/*}*/
+/*.ui-tabs .ui-tabs-panel {*/
+    /*display: block;*/
+    /*border-width: 0;*/
+    /*padding: 1em 1.4em;*/
+    /*background: none;*/
+/*}*/
+
+/*.ui-tabs .ui-tabs-nav li.ui-tabs-selected,*/
+/*.ui-tabs .ui-tabs-nav li.ui-state-active {*/
+    /*border-right: 1px solid transparent;*/
+/*}*/
+
+
+
+
+
+
 /*!
  * jQuery UI Tabs 1.10.3
  * http://jqueryui.com
@@ -145,17 +223,11 @@
  */
 .ui-tabs {
     position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
-    padding-left: 8.5em;
-    min-height: 20em;
+    padding: .2em;
 }
 .ui-tabs .ui-tabs-nav {
     margin: 0;
-    position: absolute;
-    left: 0.25em;
-    top: 0.25em;
-    bottom: 0.25em;
-    width: 8em;
-    padding: 0.2em 0 0.2em 0.2em;
+    padding: .2em .2em 0;
 }
 .ui-tabs .ui-tabs-nav li {
     list-style: none;
@@ -163,23 +235,14 @@
     position: relative;
     top: 0;
     margin: 1px .2em 0 0;
+    border-bottom-width: 0;
     padding: 0;
     white-space: nowrap;
-    right: 1px;
-    width: 100%;
-    border-right: none;
-    border-bottom-width: 1px !important;
-    -moz-border-radius: 4px 0px 0px 4px;
-    -webkit-border-radius: 4px 0px 0px 4px;
-    border-radius: 4px 0px 0px 4px;
-    overflow: hidden;
 }
 .ui-tabs .ui-tabs-nav li a {
-    float: right;
+    float: left;
     padding: .5em 1em;
     text-decoration: none;
-    width: 100%;
-    text-align: right;
 }
 .ui-tabs .ui-tabs-nav li.ui-tabs-active {
     margin-bottom: -1px;
@@ -201,10 +264,20 @@
     background: none;
 }
 
-.ui-tabs .ui-tabs-nav li.ui-tabs-selected,
-.ui-tabs .ui-tabs-nav li.ui-state-active {
-    border-right: 1px solid transparent;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*!
