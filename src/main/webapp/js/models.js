@@ -32,7 +32,6 @@ App.Models.Parameter = Backbone.Model.extend({
         var value = attrs.value;
         var name = attrs.name;
 
-
         if (Types.isSimpleTypes(type)) {
             if (!validateSimpleParameters(type, value)) {
                 return 'The value "' + name + '" does not match the type of "' + type + '".';
@@ -44,6 +43,44 @@ App.Models.Parameter = Backbone.Model.extend({
                 this.validationErrors = errors;
                 return 'The value "' + name + '" does not match the type of "' + type + '".';
             }
+        } else if (Types.isCollectionTypes(type.substring(0, type.indexOf('[')))) {
+
+            var clazz = type.substring(0, type.indexOf('['));
+
+            if(clazz == 'list' || clazz == 'array'){
+                var errors = null;
+
+                if(Array.isArray(value)){
+                    var i = 0;
+
+                    value.forEach(function(entity){
+
+                        //console.log(entity)
+
+                        var newErrors = validateParametersAsModel(attrs.classEntity, entity);
+
+                        if(newErrors){
+                            if(!errors){
+                                errors = {};
+                            }
+                            for(var key in newErrors){
+                                errors['Object ' + i + ' ' + key] = newErrors[key];
+                            }
+                        }
+                    });
+                } else {
+                    errors = {};
+                    errors['Object'] = "Object is not Array or List"
+                }
+
+
+                if (errors) {
+                    console.log(errors)
+                    this.validationErrors = errors;
+                    return 'The value "' + name + '" does not match the type of "' + type + '".';
+                }
+            }
+
         } else {
             return 'Parameter type "' + type + '" is invalid';
         }
@@ -87,8 +124,12 @@ function validateSimpleParameters(type, value) {
         case 'date':
         case 'dateTime':
         {
-            var testDate = new Date(value);
-            if (isNaN(testDate.getDate())) {
+            if(Validation.date(value)){
+                var testDate = new Date(value);
+                if (isNaN(testDate.getDate())) {
+                    return false;
+                }
+            } else {
                 return false;
             }
             break;
@@ -140,14 +181,14 @@ App.Models.Response = Backbone.Model.extend({
 
         options.url = this.urlRoot;
         options.wait = true;
-        options.success = function (data, textStatus, jqXHR) {
-            that.set(data)
-            that.xhr = jqXHR;
-        }
-        options.error = function (data, jqXHR) {
-            that.set(data)
-            that.xhr = jqXHR;
-        }
+//        options.success = function (data, textStatus, jqXHR) {
+//            that.set(data)
+//            that.xhr = jqXHR;
+//        }
+//        options.error = function (data, jqXHR) {
+//            that.set(data)
+//            that.xhr = jqXHR;
+//        }
 
         return Backbone.sync(crud, this, options);
     }

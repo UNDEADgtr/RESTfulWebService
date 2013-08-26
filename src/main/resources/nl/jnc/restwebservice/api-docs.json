@@ -8,8 +8,14 @@
             "description": ""
         },
         {
+            "path": "/user2",
+            "description": ""
+        },
+        {
             "path": "/wordList",
             "description": ""
         }
-    ]
+    ],
+    "company": "JNet",
+    "author" : "Dzmitry"
 }

@@ -1,38 +1,19 @@
 {   "apiVersion": "0.2",
     "swaggerVersion": "1.1",
     "basePath": "http://localhost:8080/RESTfulWebService/api",
-    "resourcePath": "/user",
+    "resourcePath": "/user2",
     "apis": [
         {
-            "path": "/user/{username}",
+            "path": "/user",
             "description": "Operations about user",
             "operations": [
                 {
                     "httpMethod": "GET",
-                    "summary": "Get user by user name",
+                    "summary": "Get user1",
                     "responseClass": "User",
                     "nickname": "getUserByName",
-                    "notes": "Returns a user based on username",
-                    "parameters": [
-                        {
-                            "name": "username",
-                            "description": "The name that needs to be fetched. Use user1 for testing.",
-                            "paramType": "path",
-                            "required": true,
-                            "allowMultiple": false,
-                            "dataType": "string"
-                        }
-                    ],
-                    "errorResponses": [
-                        {
-                            "code": 400,
-                            "reason": "Invalid username supplied"
-                        },
-                        {
-                            "code": 404,
-                            "reason": "User not found"
-                        }
-                    ]
+                    "notes": "Returns a user1",
+                    "path": "/user1"
                 }
             ]
         },

@@ -7,10 +7,10 @@ tpl = {
         'resourcesContent': '<div id="resource_{{tabName}}"></div>',
         'raw': '<div class="raw"><pre>{{data}}</pre></div>',
         'options': '<div class="options">' +
-            '<button onclick="Docs.openCloseOperations(\'{{resource}}\')">Operations</button>' +
-            '<button onclick="Docs.openOperationsForResource(\'{{resource}}\')">List Operations</button>' +
-            '<button onclick="Docs.closeOperationsForResource(\'{{resource}}\')">Expand Operations</button>' +
-            '<button onclick="Docs.openCloseRaw(\'{{resource}}\')">Raw</button>' +
+            '<button class="option-button" onclick="Docs.openCloseOperations(\'{{resource}}\')">Operations</button>' +
+            '<button class="option-button" onclick="Docs.openOperationsForResource(\'{{resource}}\')">List Operations</button>' +
+            '<button class="option-button" onclick="Docs.closeOperationsForResource(\'{{resource}}\')">Expand Operations</button>' +
+            '<button class="option-button" onclick="Docs.openCloseRaw(\'{{resource}}\')">Raw</button>' +
             '</div>',
         'operations': '<div class="operations"></div>',
         'heading': '<h3><div class="heading {{ httpMethod }}"><h3>' +
@@ -30,6 +30,15 @@ tpl = {
             '<div class="response-errors">' +
             '<a class="errors-link selected" href="#errors" onclick="Docs.showHideError(\'{{id}}\')">Show/Hide</a>' +
             '</div>',
+        'responseStatus': '<h4>Response Status</h4>' +
+            '<table class="fullwidth"><thead><tr><th>HTTP Status Code</th><th>Reason</th></tr></thead>' +
+            '<tbody class="operation-status">' +
+            '{{#each errorResponses}}' +
+            '<tr><td width="20%" class="code">{{this.code}}</td><td>{{this.reason}}</td></tr>' +
+            '{{/each}}' +
+            '</tr></tbody></table>',
+
+
         'modelObject': '<h4>Model object</h4>' +
             '<div class="model-object">' +
             '<a class="object-link selected" href="#model" onclick="Docs.showHideModelObject(\'{{id}}\')">Show/Hide</a>' +
@@ -38,6 +47,26 @@ tpl = {
 
 
         'form': '<form accept-charset="UTF-8" class="sandbox">' +
+            '<div style="margin:0;padding:0;display:inline"></div>' +
+            '<h4>Parameters</h4>' +
+            '<table class="fullwidth">' +
+            '<thead>' +
+            '<tr>' +
+            '<th style="width: 100px; max-width: 100px">Parameter</th>' +
+            '<th style="width: 210px; max-width: 210px">Value</th>' +
+            '<th style="width: 300px; max-width: 300px">Description</th>' +
+            '<th style="width: 100px; max-width: 100px">Parameter Type</th>' +
+            '<th style="width: 220px; max-width: 230px">Data Type</th>' +
+            '</tr>' +
+            '</thead>' +
+            '<tbody class="operation-params"></tbody>' +
+            '</table>' +
+            '<div class="sandbox_header">' +
+            //'<input class="submit" name="commit" type="submit" value="Try it out!">' +
+            '<input class="submit" name="commit" type="button" value="Try it out!">' +
+            '</div>' +
+            '</form>',
+        'formTable': '<form accept-charset="UTF-8" class="sandbox">' +
             '<div style="margin:0;padding:0;display:inline"></div>' +
             '<h4>Parameters</h4>' +
             '<table class="fullwidth">' +
@@ -100,6 +129,20 @@ tpl = {
             '<h4>' +
             '[<span>base url: </span>{{ basePath }},<span> api version: </span>{{ apiVersion }}]' +
             '</h4>' +
+            '</div>',
+        'infoButton': '<a class="infoButton" href="#">{{title}}</a>',
+        'infoPanel': '<div class="infoPanel">' +
+            '<h3>About framework</h3>' +
+            '<p>It is a framework implementation for describing and visualizing RESTful web services.<br/>' +
+            'Version: {{version}}<br/>' +
+            'Used data format: JSON' +
+            '</p>' +
+            '<h3>Something about loaded API</h3>' +
+            '<p> {{#if api.apiVersion}}Version API: {{api.apiVersion}}<br/>{{/if}}' +
+            '{{#if api.basePath}}Base path: {{api.basePath}}<br/>{{/if}}' +
+            '{{#if api.company}}Company: {{api.company}}<br/>{{/if}}' +
+            '{{#if api.author}}Author: {{api.author}}<br/>{{/if}}' +
+            '</p>' +
             '</div>'
     },
 
@@ -170,6 +213,9 @@ tpl = {
     },
     getResponseErrors: function (id) {
         return Handlebars.compile(this.templatesPattern.responseErrors)({id: id});
+    },
+    getResponseStatus: function (errorResponses) {
+        return Handlebars.compile(this.templatesPattern.responseStatus)({errorResponses: errorResponses});
     },
     getModelObject: function (id) {
         return Handlebars.compile(this.templatesPattern.modelObject)({id: id});
@@ -254,8 +300,15 @@ tpl = {
     getOptions: function (resource) {
         return Handlebars.compile(this.templatesPattern.options)({resource: resource});
     },
-
-
+    getInfoButton: function (title) {
+        if (!title) {
+            title = 'INFO'
+        }
+        return Handlebars.compile(this.templatesPattern.infoButton)({title: title});
+    },
+    getInfoPanel: function (version, api) {
+        return Handlebars.compile(this.templatesPattern.infoPanel)({version: version, api: api});
+    },
     buildResources: function (id) {
         $("#" + id).tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
     },
@@ -268,13 +321,23 @@ tpl = {
             autoHeight: true
 
         });
+        //$("button").button();
+
     },
     buildDatepicker: function (id) {
         $("." + id).datepicker({
             dateFormat: 'yy-mm-dd'
         });
-    }
+    },
+    buildInfo: function (id) {
 
+        $(".infoButton").click(function () {
+            $(".infoPanel").toggle("fast");
+            $(this).toggleClass("active");
+            return false;
+        });
+
+    }
 };
 
 //App.template = function (id) {
@@ -361,5 +424,7 @@ var Docs = {
 //$.sticker({note:'Это ошибка.',className:'stick-error'});
 
 Handlebars.registerHelper('ifeq', function (a, b, options) {
-    if (a == b) { return options.fn(this); }
+    if (a == b) {
+        return options.fn(this);
+    }
 });

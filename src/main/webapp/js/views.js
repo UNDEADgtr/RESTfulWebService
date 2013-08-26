@@ -55,7 +55,7 @@ App.Views.ApiDoc = Backbone.View.extend({
         var thisView = this
         this.model.fetch().done(function () {
             var errors = Validation.apiDocs(thisView.model.toJSON());
-            if(!errors){
+            if (!errors) {
                 App.basePath = App.ApiDoc.get('basePath');
                 thisView.render()
             } else {
@@ -73,15 +73,27 @@ App.Views.ApiDoc = Backbone.View.extend({
             App.Apis.add(model)
             App.Apis.modelView.push(view)
         });
+
+        $('body').append(tpl.getInfoPanel(App.version, this.model.toJSON()));
+        $('body').append(tpl.getInfoButton());
+
+        tpl.buildInfo()
+
         //console.log(App.Apis.modelView)
     }
 });
 
 App.Views.Api = Backbone.View.extend({
     initialize: function () {
-        _.bindAll(this, "render");
+        var that = this;
+        _.bindAll(that, "render");
         this.model.fetch({
-            success: this.render
+            success: function(){
+                that.render()
+            },
+            error: function(){
+                Message.addError('Error')
+            }
         });
     },
     render: function () {
@@ -103,7 +115,7 @@ App.Views.UIContainer = Backbone.View.extend({
         this.collection.each(function (api) {
 
             var errors = Validation.api(api.toJSON());
-            if(errors){
+            if (errors) {
                 Message.addStickerErrorsAsMany(errors);
                 Message.addError('Content api is invalid.')
                 return;
@@ -159,11 +171,15 @@ App.Views.Operations = Backbone.View.extend({
 
         this.model.get('apis').forEach(function (api) {
             var i = 1;
+            //console.log(api)
             api.operations.forEach(function (operation) {
                 operation.httpMethod = operation.httpMethod.toLowerCase();
-                operation.path = api.path;
+                if(operation.path){
+                    operation.path = api.path + operation.path;
+                } else{
+                    operation.path = api.path;
+                }
                 $el.append(tpl.getHeading(operation));
-
                 var operationContent = new App.Views.OperationContent({model: operation})
                 $el.append($('<div></div>').append(operationContent.render().el));
             })
@@ -194,12 +210,26 @@ App.Views.OperationContent = Backbone.View.extend({
         var modelSignature = new App.Views.ModelSignature({model: model, idOperation: id});
         $el.append(modelSignature.render().el);
 
-        $el.append('<br/>');
+        //$el.append('<br/>');
+
+//        if (model.errorResponses) {
+//            $el.append(tpl.getResponseErrors(id));
+//            var errors = new App.Views.Errors({model: model});
+//            $el.find('.response-errors').append(errors.render().el);
+//        }
+
+        if (model.errorResponses) {
+            $el.append(tpl.getResponseStatus(model.errorResponses));
+        }
+
+//        $el.append('<br/>');
 
         var form = new App.Views.Form({model: model, idOperation: id});
         $el.append(form.render().el);
 
         $el.append('<br/>');
+
+
 
         //var response = new App.Views.Response({idOperation: id});
         //$el.append(response.render().el);
@@ -231,13 +261,6 @@ App.Views.ModelSignature = Backbone.View.extend({
 
         var snippet = new App.Views.Snippet({model: model});
         $el.find('.signature-container').append(snippet.render().el);
-
-
-        if (model.errorResponses) {
-            $el.append(tpl.getResponseErrors(id));
-            var errors = new App.Views.Errors({model: model});
-            $el.find('.response-errors').append(errors.render().el);
-        }
 
         if (model.httpMethod.toLowerCase() == "post" || model.httpMethod.toLowerCase() == "put") {
             $el.append(tpl.getModelObject(id));
@@ -404,12 +427,14 @@ App.Views.FormSubmit = Backbone.View.extend({
                     } else if ($('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()) {
                         parameter.set({value: $('#' + id + ' form.sandbox select[name=' + Converter.nameToJQueryName(name) + ']').val()}, {validate: true})
                     } else if ($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val()) {
-                        try {
-                            parameter.set({value: JSON.parse($('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val())}, {validate: true})
-                        }
-                        catch (e) {
-                            Message.addError('Invalid json format. Please, check your entered data!');
-                            Message.addStickerError('Invalid json format.<br/>Please, check your entered data');
+                            var json = JsonUtil.parseWithValidation(
+                                $('#' + id + ' form.sandbox textarea[name=' + Converter.nameToJQueryName(name) + ']').val(),
+                                'Invalid json format. Please, check your entered data!',
+                                'Invalid json format.<br/>Please, check your entered data'
+                            )
+                        if(json){
+                            parameter.set({value: json}, {validate: true})
+                        } else{
                             isErrors = true;
                         }
                     }
@@ -426,7 +451,7 @@ App.Views.FormSubmit = Backbone.View.extend({
 
             }
             if (!isErrors) {
-                new App.Views.Response({idOperation: id, parameters : this.options.parameters});
+                new App.Views.Response({idOperation: id, parameters: this.options.parameters});
             }
         }
     }
@@ -444,6 +469,8 @@ App.Views.Response = Backbone.View.extend({
 
         this.model = new App.Models.Response();
         path = App.basePath + parameters.operation.path;
+
+        console.log(path)
 
         if (parameters) {
             parameters.forEach(function (parameter) {
@@ -470,10 +497,22 @@ App.Views.Response = Backbone.View.extend({
 
         this.model.urlRoot = path;
 
-        this.model.sync(parameters.operation.httpMethod).done(function () {
-            thisView.xhr = thisView.model.xhr;
-            thisView.render()
-        })
+//        this.model.sync(parameters.operation.httpMethod).done(function () {
+//            thisView.xhr = thisView.model.xhr;
+//            thisView.render()
+//        })
+
+        this.model.sync(parameters.operation.httpMethod)
+            .success(function (data, textStatus, jqXHR) {
+                thisView.model.set(data)
+                thisView.xhr = jqXHR;
+                thisView.render();
+            })
+            .error(function (jqXHR,textStatus, thrownError) {
+                thisView.model.set(JSON.parse(jqXHR.responseText))
+                thisView.xhr = jqXHR;
+                thisView.render();
+            });
 
 //        this.model.fetch({
 //            success: function (data, textStatus, jqXHR) {
@@ -494,16 +533,20 @@ App.Views.Response = Backbone.View.extend({
         var xhr = this.xhr;
         var operation = this.options.operation;
 
-        //console.log(xhr)
+
 
         var response = {};
         response.requestURL = model.urlRoot;
+
+        //console.log(xhr)
 
         if (xhr.getResponseHeader('Content-Type') == 'application/json') {
             response.responseBody = JSON.stringify(model.toJSON(), '', 3);
         } else if (xhr.getResponseHeader('Content-Type') == 'text/plain') {
             response.responseBody = xhr.responseText;
         }
+
+        console.log(xhr)
 
         response.responseCode = xhr.status;
         response.responseHeaders = xhr.getAllResponseHeaders();
@@ -523,8 +566,6 @@ App.Views.Response = Backbone.View.extend({
 App.Views.ResponseClass = Backbone.View.extend({
     tagName: 'div',
     render: function () {
-
-
         return this;
     }
 });

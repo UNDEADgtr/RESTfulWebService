@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Map;
 
 @Path("/")
@@ -113,7 +114,7 @@ public class CompanyResource {
     @Formatted
     @Path("/user/{username}")
     @Produces(MediaType.APPLICATION_JSON)
-    public JSONObject readUser(@PathParam("username") String username) throws Exception {
+    public Response readUser(@PathParam("username") String username) throws Exception {
         String msg = String.format("Get user configuration for username=%s", username);
         try {
             JSONObject user = null;
@@ -131,10 +132,9 @@ public class CompanyResource {
                 error.put("type", "error");
                 error.put("code", 404);
                 error.put("reason", "The user cannot be found");
-                return error;
+                return Response.status(404).entity(error).build();
             }
-            //return Response.status(200).entity(user).build();
-            return user;
+            return  Response.status(200).entity(user).build();
         } catch (Exception e) {
             logger.error(msg, e);
             throw new Exception(e);
@@ -145,7 +145,7 @@ public class CompanyResource {
     @Formatted
     @Path("/users/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Object readUser(@QueryParam("access") boolean access,
+    public Response readUser(@QueryParam("access") boolean access,
                            @QueryParam("email") String email,
                            @QueryParam("userStatus") int userStatus,
                            @QueryParam("dateReg") String dateReg) throws Exception {
@@ -174,10 +174,10 @@ public class CompanyResource {
                 error.put("type", "error");
                 error.put("code", 404);
                 error.put("reason", "The user cannot be found");
-                return error;
+                return Response.status(404).entity(error).build();
             }
             //return Response.status(200).entity(user).build();
-            return us;
+            return Response.status(200).entity(us).build();
         } catch (Exception e) {
             logger.error(msg, e);
             throw new Exception(e);

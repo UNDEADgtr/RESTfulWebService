@@ -7,7 +7,8 @@ window.App = {
     URLSettings: {},
     View: {},
     AddUrlSettings: {},
-    basePath: ''
+    basePath: '',
+    version: '0.1'
 }
 
 
@@ -42,57 +43,37 @@ var JsonUtil = {
         }
         return null
     },
-//    validateModel: function (model, values) {
-//        var models = this.models;
-//        var isValid = true;
-//
-//        for (var name in values) {
-//
-//            model.parameters.forEach(function (parameter) {
-//                if (parameter.name == name || parameter.dataType == name) {
-//
-//                    //console.log(parameter.dataType)
-//                    //console.log(models[parameter.dataType])
-//
-//                    if(parameter.dataType in models){
-//
-//
-//                        //console.log('123');
-//                        var modelObject = models[name];
-//
-//
-//
-//
-//                    }
-//                }
-//            })
-//        }
-//
-////        for(var k in result) {
-////            console.log(k, result[k]);
-////        }
-//
-//        for (var clazzName in models) {
-////            if (clazz == clazzName) {
-////
-////                var properties = models[clazzName].properties;
-////                var data = { };
-////                for (var name in properties) {
-////                    data[name] = properties[name].type;
-////                }
-////                var result = {};
-////                result[clazzName] = data;
-////
-////                return true
-////            }
-//        }
-//        return isValid;
-//    },
     getFirstElement: function (model) {
         for (var key in model) {
             if (model.hasOwnProperty(key)) {
                 return model[key];
             }
+        }
+    },
+    parseWithValidation: function (json, message, sticker) {
+        if(!json){
+            this.jsonMessage("Json data is empty", "Json data is empty")
+            return null;
+        }
+        try {
+            var result = JSON.parse(json);
+            return result;
+        }
+        catch (e) {
+            if(message){
+                this.jsonMessage(message, sticker);
+            } else{
+                this.jsonMessage("Invalid json format.", "Invalid json format.")
+            }
+            return null;
+        }
+    },
+    jsonMessage: function (message, sticker) {
+        if(message){
+            Message.addError(message);
+        }
+        if(sticker){
+            Message.addStickerError(sticker);
         }
     }
 };
@@ -137,6 +118,10 @@ var Validation = {
     url: function (url) {
         //var a = /((ftp|https?):\/\/)?(www\.)?[a-z0-9\-\.]{3,}\.[a-z]{3}$/
         return true//a.test(url);
+    },
+    date: function (date) {
+        var a = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/
+        return a.test(date);
     },
     apiDocs: function (api) {
         var errors = this.baseApiValidation(api);
@@ -249,6 +234,7 @@ var Types = {
         return this.simpleTypes.indexOf(name) >= 0;
     },
     isCollectionTypes: function (name) {
+        console.log(name)
         name = name.toLowerCase();
         return this.collectionTypes.indexOf(name) >= 0;
     }

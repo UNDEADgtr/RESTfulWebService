@@ -211,6 +211,7 @@ body #header form#api_selector .input a#explore:hover {
 .ui-tabs.ui-tabs-vertical {
     padding: 0;
     width: 100%;
+    background: rgba(0, 165, 255, 0.41);
 }
 .ui-tabs.ui-tabs-vertical .ui-widget-header {
     border: none;
@@ -218,9 +219,10 @@ body #header form#api_selector .input a#explore:hover {
 .ui-tabs.ui-tabs-vertical .ui-tabs-nav {
     float: left;
     width: 10em;
-    background: #CCC;
+    background: #0083e3;
     border-radius: 4px 0 0 4px;
     border-right: 1px solid gray;
+    height: 100%;
 }
 .ui-tabs.ui-tabs-vertical .ui-tabs-nav li {
     clear: left;
@@ -257,4 +259,92 @@ body #header form#api_selector .input a#explore:hover {
     border-radius: 0;
     position: relative;
     left: -1px;
+    background: #ffffff;
+}
+
+
+
+/*---------------------------------------------  INFO-PANEL  -------------------------------------------------------*/
+
+
+a.infoButton:focus {
+    outline: none;
+}
+
+.infoPanel h3 {
+    font-size:14px;
+    font-family:verdana, helvetica, arial, sans-serif;
+    letter-spacing:-1px;
+    color:#fff;
+    font-weight: 700;
+    text-transform:uppercase;
+    margin:0;
+    padding:5px 0 5px 0;
+}
+
+.infoPanel p {
+    color:#cccccc;
+    line-height:22px;
+    padding: 0 0 10px;
+    margin: 10px 0 10px 0;
+}
+
+.infoPanel {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    display: none;
+    background: #0083e3;
+    border:1px solid #111111;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    width: 330px;
+    height: auto;
+    padding: 30px 30px 30px 130px;
+    filter: alpha(opacity=85);
+    opacity: .85;
+}
+
+a.infoButton{
+    position: absolute;
+    text-decoration: none;
+    top: 70px; left: 0;
+    font-size: 16px;
+    letter-spacing:-1px;
+    font-family: verdana, helvetica, arial, sans-serif;
+    color:#fff;
+    padding: 20px 40px 20px 15px;
+    font-weight: 700;
+    background: #006dbf;
+    border:1px solid #444444;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    display: block;
+}
+
+a.infoButton:hover{
+    position: absolute;
+    text-decoration: none;
+    top: 70px; left: 0;
+    font-size: 16px;
+    letter-spacing:-1px;
+    font-family: verdana, helvetica, arial, sans-serif;
+    color:#000;
+    padding: 20px 40px 20px 20px;
+    font-weight: 700;
+    background:#e6e6e6;
+    border:1px solid #444444;
+    -moz-border-radius-topright: 20px;
+    -webkit-border-top-right-radius: 20px;
+    -moz-border-radius-bottomright: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-bottomleft: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    display: block;
 }
