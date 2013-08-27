@@ -227,7 +227,7 @@ var Converter = {
 }
 
 var Types = {
-    simpleTypes: new Array('integer', 'long', 'float', 'double', 'string', 'boolean', 'date', 'dateTime'),
+    simpleTypes: new Array('int', 'integer', 'long', 'float', 'double', 'string', 'boolean', 'date', 'dateTime'),
     collectionTypes: new Array('list', 'array', 'map'),
     isSimpleTypes: function (name) {
         name = name.toLowerCase();

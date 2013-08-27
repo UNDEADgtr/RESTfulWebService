@@ -11,7 +11,7 @@
                     "httpMethod": "GET",
                     "summary": "Get user1",
                     "responseClass": "User",
-                    "nickname": "getUserByName",
+                    "nickname": "getUser1",
                     "notes": "Returns a user1",
                     "path": "/user1"
                 }

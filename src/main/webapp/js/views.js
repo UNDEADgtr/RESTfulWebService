@@ -371,6 +371,7 @@ App.Views.Form = Backbone.View.extend({
         parameters.operation = this.model;
         $el.append(tpl.getForm());
         if (model.parameters) {
+            $el.find('form div.tableArea').append(tpl.getFormTable())
             model.parameters.forEach(function (parameter) {
                 $el.find('tbody').append(tpl.getRowTable(parameter))
                 parameters.add(new App.Models.Parameter({

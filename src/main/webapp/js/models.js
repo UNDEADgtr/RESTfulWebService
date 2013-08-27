@@ -92,6 +92,7 @@ function validateSimpleParameters(type, value) {
     type = type.toLocaleLowerCase()
     switch (type) {
         case 'integer':
+        case 'int':
         {
             if (isNaN(parseInt(value))) {
                 return false;

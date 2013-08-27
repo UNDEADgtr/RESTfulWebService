@@ -37,17 +37,18 @@ tpl = {
             '<tr><td width="20%" class="code">{{this.code}}</td><td>{{this.reason}}</td></tr>' +
             '{{/each}}' +
             '</tr></tbody></table>',
-
-
         'modelObject': '<h4>Model object</h4>' +
             '<div class="model-object">' +
             '<a class="object-link selected" href="#model" onclick="Docs.showHideModelObject(\'{{id}}\')">Show/Hide</a>' +
             '</div>',
         'notes': '<h4>Implementation Notes</h4><p>{{notes}}</p>',
-
-
         'form': '<form accept-charset="UTF-8" class="sandbox">' +
-            '<div style="margin:0;padding:0;display:inline"></div>' +
+            '<div class="tableArea"></div>' +
+            '<div class="sandbox_header">' +
+            '<input class="submit" name="commit" type="button" value="Try it out!">' +
+            '</div>' +
+            '</form>',
+        'formTable': '<div style="margin:0;padding:0;display:inline"></div>' +
             '<h4>Parameters</h4>' +
             '<table class="fullwidth">' +
             '<thead>' +
@@ -60,34 +61,9 @@ tpl = {
             '</tr>' +
             '</thead>' +
             '<tbody class="operation-params"></tbody>' +
-            '</table>' +
-            '<div class="sandbox_header">' +
-            //'<input class="submit" name="commit" type="submit" value="Try it out!">' +
-            '<input class="submit" name="commit" type="button" value="Try it out!">' +
-            '</div>' +
-            '</form>',
-        'formTable': '<form accept-charset="UTF-8" class="sandbox">' +
-            '<div style="margin:0;padding:0;display:inline"></div>' +
-            '<h4>Parameters</h4>' +
-            '<table class="fullwidth">' +
-            '<thead>' +
-            '<tr>' +
-            '<th style="width: 100px; max-width: 100px">Parameter</th>' +
-            '<th style="width: 210px; max-width: 210px">Value</th>' +
-            '<th style="width: 300px; max-width: 300px">Description</th>' +
-            '<th style="width: 100px; max-width: 100px">Parameter Type</th>' +
-            '<th style="width: 220px; max-width: 230px">Data Type</th>' +
-            '</tr>' +
-            '</thead>' +
-            '<tbody class="operation-params"></tbody>' +
-            '</table>' +
-            '<div class="sandbox_header">' +
-            //'<input class="submit" name="commit" type="submit" value="Try it out!">' +
-            '<input class="submit" name="commit" type="button" value="Try it out!">' +
-            '</div>' +
-            '</form>',
+            '</table>',
         'rowTable': '<tr>' +
-            '<td class="code required">{{name}}</td>' +
+            '<td class="code {{#if required}}required{{/if}}">{{name}}</td>' +
             '<td class="input">{{{input}}}</td>' +
             '<td><strong>{{description}}</strong></td>' +
             '<td>{{paramType}}</td>' +
@@ -226,25 +202,10 @@ tpl = {
     getForm: function () {
         return Handlebars.compile(this.templatesPattern.form)();
     },
+    getFormTable: function () {
+        return Handlebars.compile(this.templatesPattern.formTable)();
+    },
     getRowTable: function (model) {
-        //        {
-//            "name": "minCorpusCount",
-//            "defaultValue": "5",
-//            "description": "Minimum corpus frequency for terms",
-//            "required": false,
-//            "allowableValues": {
-//                "max": "Infinity",
-//                "min": 0.0,
-//                "valueType": "RANGE"
-//                "values": ["noun", "adjective", "verb", "adverb", "interjection", "pronoun", "preposition", "abbreviation", "affix", "article", "auxiliary-verb", "conjunction", "definite-article", "family-name", "given-name", "idiom", "imperative", "noun-plural", "noun-posessive", "past-participle", "phrasal-prefix", "proper-noun", "proper-noun-plural", "proper-noun-posessive", "suffix", "verb-intransitive", "verb-transitive"],
-//                "valueType": "LIST"
-//            },
-//            "dataType": "int",
-//            "paramType": "query",
-//            "allowMultiple": false
-//        }
-
-
         if (model.required) {
             model.requiredTrue = ' required'
             model.placeholder = '(required)'
@@ -260,7 +221,6 @@ tpl = {
             } else {
                 model.input = this.getInputString(model)
             }
-
 
         } else if (model.allowableValues.valueType == 'LIST') {
             model.input = this.getInputList(model)
@@ -321,8 +281,6 @@ tpl = {
             autoHeight: true
 
         });
-        //$("button").button();
-
     },
     buildDatepicker: function (id) {
         $("." + id).datepicker({
@@ -330,13 +288,11 @@ tpl = {
         });
     },
     buildInfo: function (id) {
-
         $(".infoButton").click(function () {
             $(".infoPanel").toggle("fast");
             $(this).toggleClass("active");
             return false;
         });
-
     }
 };
 
