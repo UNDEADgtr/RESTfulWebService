@@ -8,7 +8,9 @@ window.App = {
     View: {},
     AddUrlSettings: {},
     basePath: '',
-    version: '0.1'
+    loginPath: '',
+    version: '0.1',
+    session: null
 }
 
 
@@ -30,6 +32,10 @@ var JsonUtil = {
         return clazz
     },
     getClassAsJson: function (clazz) {
+        if(!clazz){
+            return null;                                                                            //!!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+
         var models = this.models;
         if (clazz.indexOf('[') >= 0) {
             clazz = clazz.substring(clazz.indexOf('[') + 1, clazz.indexOf(']'));
@@ -150,9 +156,9 @@ var Validation = {
                 if (!operation.nickname) {
                     errors['nickname'] = 'Parameter is mandatory';
                 }
-                if (!operation.responseClass) {
-                    errors['responseClass'] = 'Parameter is mandatory';
-                }
+//                if (!operation.responseClass) {
+//                    errors['responseClass'] = 'Parameter is mandatory';
+//                }
                 if (operation.parameters) {
                     operation.parameters.forEach(function (parameter) {
                         if (!parameter.dataType) {
@@ -188,9 +194,9 @@ var Validation = {
     },
     baseApiValidation: function (api) {
         var errors = {}
-        if (!api.apiVersion) {
-            errors['apiVersion'] = 'Parameter is mandatory';
-        }
+//        if (!api.apiVersion) {
+//            errors['apiVersion'] = 'Parameter is mandatory';
+//        }
         if (api.basePath) {
 
         } else {
@@ -200,11 +206,11 @@ var Validation = {
             if (Object.keys(api.apis).length == 0) {
                 errors['apis'] = 'Parameter is empty';
             } else {
-                api.apis.forEach(function (obj) {
-                    if (!obj.path) {
-                        errors['path'] = 'Parameter is mandatory in "apis"';
-                    }
-                });
+//                api.apis.forEach(function (obj) {
+//                    if (!obj.path) {
+//                        errors['path'] = 'Parameter is mandatory in "apis"';
+//                    }
+//                });
             }
         } else {
             errors['apis'] = 'Parameter is mandatory';

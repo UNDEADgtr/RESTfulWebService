@@ -1,0 +1,165 @@
+{"swaggerVersion": "1.1",
+    "basePath": "http://172.19.40.97/api/open311/",
+    "apis": [
+        {
+            "description": "Production Open 311 service",
+            "operations": [
+                {
+                    "httpMethod": "GET",
+                    "nickname": "getRequests22",
+                    "notes": "Get Open311 requests",
+                    "summary": "Get Open311 requests",
+                    "path": "/requests.xml",
+                    "parameters": [
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "ID of a request",
+                            "name": "service_request_id",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Jurisdiction",
+                            "name": "jurisdiction_id",
+                            "paramType": "query",
+                            "required": false,
+                            "allowableValues": {
+                                "valueType": "LIST",
+                                "values": ["03623", "0479", "0422"]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "httpMethod": "POST",
+                    "nickname": "claim",
+                    "notes": "Send Open311 request",
+                    "summary": "Send Open311 request",
+                    "path": "/requests.xml",
+                    "parameters": [
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "service code that is designation for posting the given data",
+                            "name": "service_code",
+                            "paramType": "form",
+                            "required": true
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Jurisdiction",
+                            "name": "jurisdiction_id",
+                            "paramType": "form",
+                            "required": true,
+                            "allowableValues": {
+                                "valueType": "LIST",
+                                "values": ["03623", "0479", "0422"]
+                            }
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Sender e-mail address",
+                            "name": "email",
+                            "paramType": "form",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Sender first name",
+                            "name": "first_name",
+                            "paramType": "form",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Sender last name",
+                            "name": "last_name",
+                            "paramType": "form",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Claim details",
+                            "name": "description",
+                            "paramType": "form",
+                            "required": true
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "double",
+                            "description": "Latitude",
+                            "name": "lat",
+                            "paramType": "form",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "double",
+                            "description": "Longitude",
+                            "name": "long",
+                            "paramType": "form",
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "httpMethod": "GET",
+                    "nickname": "getEndpoints",
+                    "notes": "Get Open311 endpoints",
+                    "summary": "Get Open311 endpoints",
+                    "path": "/discovery.xml",
+                    "parameters": [
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Jurisdiction",
+                            "name": "jurisdiction_id",
+                            "paramType": "query",
+                            "required": false,
+                            "allowableValues": {
+                                "valueType": "LIST",
+                                "values": ["03623", "0479", "0422"]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "httpMethod": "GET",
+                    "nickname": "getServices",
+                    "notes": "Get Open311 services",
+                    "summary": "Get Open311 services",
+                    "path": "/services.xml",
+                    "parameters": [
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "service code",
+                            "name": "service_code",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "string",
+                            "description": "Jurisdiction",
+                            "name": "jurisdiction_id",
+                            "paramType": "query",
+                            "required": false,
+                            "allowableValues": {
+                                "valueType": "LIST",
+                                "values": ["03623", "0479", "0422"]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]}

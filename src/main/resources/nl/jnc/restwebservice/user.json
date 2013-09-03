@@ -37,6 +37,36 @@
             ]
         },
         {
+            "path": "/login",
+            "operations": [
+                {
+                    "httpMethod": "GET",
+                    "summary": "Login user",
+                    "responseClass": "void",
+                    "nickname": "loginUser",
+                    "login": true,
+                    "parameters": [
+                        {
+                            "name": "username",
+                            "description": "Username for login (admin)",
+                            "paramType": "query",
+                            "required": true,
+                            "allowMultiple": false,
+                            "dataType": "string"
+                        },
+                        {
+                            "name": "password",
+                            "description": "Password for login (admin)",
+                            "paramType": "query",
+                            "required": true,
+                            "allowMultiple": false,
+                            "dataType": "string"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "path": "/users/",
             "description": "Operations about user",
             "operations": [

@@ -263,7 +263,6 @@ body #header form#api_selector .input a#explore:hover {
 }
 
 
-
 /*---------------------------------------------  INFO-PANEL  -------------------------------------------------------*/
 
 
@@ -305,6 +304,7 @@ a.infoButton:focus {
     padding: 30px 30px 30px 130px;
     filter: alpha(opacity=85);
     opacity: .85;
+    z-index: 3;
 }
 
 a.infoButton{
@@ -326,6 +326,7 @@ a.infoButton{
     -moz-border-radius-bottomleft: 0px;
     -webkit-border-bottom-left-radius: 0px;
     display: block;
+    z-index: 4;
 }
 
 a.infoButton:hover{
@@ -348,3 +349,105 @@ a.infoButton:hover{
     -webkit-border-bottom-left-radius: 0px;
     display: block;
 }
+
+
+/*---------------------------------------------  LOGIN  -------------------------------------------------------*/
+
+#login-trigger{
+    display: inline-block;
+    height: 25px;
+    line-height: 25px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #444;
+    text-shadow: 0 1px 0 #fff;
+    border-radius: 3px;
+    padding: 0 3px 0 3px;
+    list-style: none;
+    position: relative;
+    float: right;
+    background: #eee;
+    border-bottom: 1px solid #fff;
+}
+
+#login-trigger:hover{
+    background: #fff;
+}
+
+#login-content {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 10px;
+    width: 250px;
+    z-index: 999;
+    background: #fff;
+    padding: 15px;
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,.9);
+    border-radius: 3px 3px 3px 3px;
+}
+
+/*--------------------*/
+
+#inputs input {
+    background: #f1f1f1;
+    padding: 6px 5px;
+    margin: 0 0 5px 0;
+    width: 238px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 0 1px 1px #ccc inset;
+}
+
+#inputs input:focus {
+    background-color: #fff;
+    border-color: #e8c291;
+    outline: none;
+    box-shadow: 0 0 0 1px #e8c291 inset;
+}
+
+#inputs p {
+    margin-bottom: 10px;
+}
+
+/*--------------------*/
+
+#actions button {
+    background-color: #d14545;
+    border-radius: 3px;
+    text-shadow: 0 1px 0 rgba(0,0,0,.5);
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+    border: 1px solid #7e1515;
+    float: right;
+    height: 30px;
+    padding: 0;
+    width: 100px;
+    cursor: pointer;
+    font: bold 14px Arial, Helvetica;
+    color: #fff;
+}
+
+#actions button:hover,
+#actions button:focus {
+    background-color: #e97171;
+}
+
+#actions button:active {
+    outline: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+}
+
+#actions button::-moz-focus-inner {
+    border: none;
+}
+
+/*#actions label {*/
+    /*float: right;*/
+    /*line-height: 30px;*/
+/*}*/
+
+/*#actions label input {*/
+    /*position: relative;*/
+    /*top: 2px;*/
+    /*right: 2px;*/
+/*}*/

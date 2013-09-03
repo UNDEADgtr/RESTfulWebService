@@ -109,6 +109,19 @@ public class CompanyResource {
         }
     }
 
+    @GET
+    @Formatted
+    @Path("apiplatform/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JSONObject readApiPlatform(@PathParam("name") String name) throws Exception {
+        String msg = String.format("Get Api for name=%s", name);
+        try {
+            return util.getJSONApi("/apiplatform/" + name);
+        } catch (Exception e) {
+            logger.error(msg, e);
+            throw new Exception(e);
+        }
+    }
 
     @GET
     @Formatted
@@ -134,7 +147,7 @@ public class CompanyResource {
                 error.put("reason", "The user cannot be found");
                 return Response.status(404).entity(error).build();
             }
-            return  Response.status(200).entity(user).build();
+            return Response.status(200).entity(user).build();
         } catch (Exception e) {
             logger.error(msg, e);
             throw new Exception(e);
@@ -146,9 +159,9 @@ public class CompanyResource {
     @Path("/users/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response readUser(@QueryParam("access") boolean access,
-                           @QueryParam("email") String email,
-                           @QueryParam("userStatus") int userStatus,
-                           @QueryParam("dateReg") String dateReg) throws Exception {
+                             @QueryParam("email") String email,
+                             @QueryParam("userStatus") int userStatus,
+                             @QueryParam("dateReg") String dateReg) throws Exception {
         String msg = String.format("Get user configuration for access=%s, email=%s, userStatus=%s", access, email, userStatus);
         try {
             JSONArray us = new JSONArray();
@@ -183,6 +196,39 @@ public class CompanyResource {
             throw new Exception(e);
         }
     }
+
+    @GET
+    @Formatted
+    @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response login(@QueryParam("username") String username,
+                          @QueryParam("password") String password) throws Exception {
+        String msg = String.format("Get Company configuration for username=%s", username);
+        try {
+
+            JSONObject result = null;
+
+            if (username.equals("admin") && password.equals("admin")) {
+                result = new JSONObject();
+                result.put("token", newId);
+                result.put("userId", newId);
+                result.put("userSignature", newId);
+            }
+
+            if (result == null) {
+                JSONObject error = new JSONObject();
+                error.put("type", "error");
+                error.put("code", 404);
+                error.put("reason", "Invalid username or login");
+                return Response.status(404).entity(error).build();
+            }
+            return Response.status(200).entity(result).build();
+        } catch (Exception e) {
+            logger.error(msg, e);
+            throw new Exception(e);
+        }
+    }
+
 
     @POST
     @Formatted

@@ -47,23 +47,23 @@ App.Models.Parameter = Backbone.Model.extend({
 
             var clazz = type.substring(0, type.indexOf('['));
 
-            if(clazz == 'list' || clazz == 'array'){
+            if (clazz == 'list' || clazz == 'array') {
                 var errors = null;
 
-                if(Array.isArray(value)){
+                if (Array.isArray(value)) {
                     var i = 0;
 
-                    value.forEach(function(entity){
+                    value.forEach(function (entity) {
 
                         //console.log(entity)
 
                         var newErrors = validateParametersAsModel(attrs.classEntity, entity);
 
-                        if(newErrors){
-                            if(!errors){
+                        if (newErrors) {
+                            if (!errors) {
                                 errors = {};
                             }
-                            for(var key in newErrors){
+                            for (var key in newErrors) {
                                 errors['Object ' + i + ' ' + key] = newErrors[key];
                             }
                         }
@@ -125,7 +125,7 @@ function validateSimpleParameters(type, value) {
         case 'date':
         case 'dateTime':
         {
-            if(Validation.date(value)){
+            if (Validation.date(value)) {
                 var testDate = new Date(value);
                 if (isNaN(testDate.getDate())) {
                     return false;
@@ -195,4 +195,22 @@ App.Models.Response = Backbone.Model.extend({
     }
 });
 
+App.Models.Session = Backbone.Model.extend({
+    defaults: {
+        access_token: null,
+        user_id: null
+    },
+    authenticated: (this.access_token != null),
+    initialize: function () {
+        this.load()
+    },
+    save: function (auth_hash) {
+        //$.cookie('user_id', auth_hash.id)
+        //$.cookie('access_token', auth_hash.access_token)
+    },
+    load: function () {
+        //this.user_id = $.cookie('user_id')
+        //this.access_token = $.cookie('access_token')
+    }
+})
 

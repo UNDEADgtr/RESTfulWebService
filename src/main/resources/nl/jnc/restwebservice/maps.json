@@ -1,0 +1,312 @@
+{"swaggerVersion": "1.1", "basePath": "http://172.19.40.97/api/maps/", "apis": [
+    {
+        "description": "CivityMaps service meta information",
+        "operations": [
+            {
+                "httpMethod": "PUT",
+                "nickname": "setVote",
+                "notes": "Set Vote",
+                "summary": "Set Vote",
+                "path": "/vote",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Placemark Id",
+                        "name": "id",
+                        "paramType": "query",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Account Id",
+                        "name": "account_id",
+                        "paramType": "query",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "httpMethod": "GET",
+                "nickname": "getMaps",
+                "notes": "Get maps",
+                "summary": "Get maps",
+                "path": "/Nederland/default/{city}/",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "city",
+                        "name": "city",
+                        "paramType": "path",
+                        "required": true,
+                        "allowableValues": {
+                            "valueType": "LIST",
+                            "values": ["Den Haag,ZH", "Amsterdam,NH", "Amersfort,UT"]
+                        }
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "number",
+                        "description": "Number of maps to be returned",
+                        "name": "num",
+                        "paramType": "query",
+                        "required": false
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "number",
+                        "description": "Number of items are skipping",
+                        "name": "skip",
+                        "paramType": "query",
+                        "required": false
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "The coordinates of current user location",
+                        "name": "geoloc",
+                        "paramType": "query",
+                        "required": false
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Parameter determines the distance units",
+                        "name": "units",
+                        "paramType": "query",
+                        "required": false
+                    }
+                ]
+            },
+            {
+                "httpMethod": "GET",
+                "nickname": "getViews",
+                "notes": "Get map views",
+                "summary": "Get map views",
+                "path": "/",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "List",
+                        "description": "id",
+                        "name": "id",
+                        "paramType": "query",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "httpMethod": "GET",
+                "nickname": "search",
+                "notes": "Maps search",
+                "summary": "Maps search",
+                "path": "/Nederland/default/{city}/",
+                "parameters": [
+                    {
+                        "allowMultiple": true,
+                        "dataType": "string",
+                        "description": "city",
+                        "name": "city",
+                        "paramType": "path",
+                        "required": true,
+                        "defaultValue": "Den Haag,ZH",
+                        "allowableValues": {
+                            "valueType": "LIST",
+                            "values": ["Den Haag,ZH", "Amsterdam,NH", "Amersfort,UT"]
+                        }
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Search maps",
+                        "name": "fullText",
+                        "paramType": "query",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "httpMethod": "GET",
+                "nickname": "searchComments",
+                "notes": "Search Comments",
+                "summary": "Search Comments",
+                "path": "/comments",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Placemark Id",
+                        "name": "id",
+                        "paramType": "query",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "number",
+                        "description": "Number of comments",
+                        "name": "num",
+                        "paramType": "query",
+                        "required": false
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "number",
+                        "description": "Offset",
+                        "name": "offset",
+                        "paramType": "query",
+                        "required": false
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Type",
+                        "name": "type",
+                        "paramType": "query",
+                        "required": false,
+                        "allowableValues": {
+                            "valueType": "LIST",
+                            "values": ["comment", "issue", "correction"]
+                        }
+                    }
+                ]
+            },
+            {
+                "httpMethod": "POST",
+                "nickname": "addComment",
+                "notes": "Add Comment",
+                "summary": "Add Comment",
+                "path": "/comments",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Placemark Id",
+                        "name": "id",
+                        "paramType": "form",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Account Id",
+                        "name": "account_id",
+                        "paramType": "form",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Comment",
+                        "name": "comment",
+                        "paramType": "form",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Type",
+                        "name": "type",
+                        "paramType": "form",
+                        "required": false,
+                        "defaultValue": "comment",
+                        "allowableValues": {
+                            "valueType": "LIST",
+                            "values": ["comment", "issue", "correction"]
+                        }
+                    }
+                ]
+            },
+            {
+                "httpMethod": "GET",
+                "nickname": "getRating",
+                "notes": "Get Rating",
+                "summary": "Get Rating",
+                "path": "/rating",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Placemark Id",
+                        "name": "id",
+                        "paramType": "query",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Account Id",
+                        "name": "account_id",
+                        "paramType": "query",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "httpMethod": "PUT",
+                "nickname": "setRating",
+                "notes": "Set Rating",
+                "summary": "Set Rating",
+                "path": "/rating",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Placemark Id",
+                        "name": "id",
+                        "paramType": "query",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Account Id",
+                        "name": "account_id",
+                        "paramType": "query",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "number",
+                        "description": "Rating",
+                        "name": "rating",
+                        "paramType": "body",
+                        "required": true,
+                        "allowableValues": {
+                            "valueType": "RANGE",
+                            "min": 1,
+                            "max": 5,
+                            "values": []
+                        }
+                    }
+                ]
+            },
+            {
+                "httpMethod": "GET",
+                "nickname": "getVote",
+                "notes": "Get Vote",
+                "summary": "Get Vote",
+                "path": "/vote",
+                "parameters": [
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Placemark Id",
+                        "name": "id",
+                        "paramType": "query",
+                        "required": true
+                    },
+                    {
+                        "allowMultiple": false,
+                        "dataType": "string",
+                        "description": "Account Id",
+                        "name": "account_id",
+                        "paramType": "query",
+                        "required": true
+                    }
+                ]
+            }
+        ]
+    }
+]}

@@ -1,0 +1,146 @@
+{"swaggerVersion": "1.1",
+    "basePath": "http://172.19.40.97/api/moor",
+    "apis": [
+        {
+            "description": "MOOR Services",
+            "operations": [
+                {
+                    "httpMethod": "GET",
+                    "nickname": "GetOrganisations",
+                    "notes": "MOOR Organisations",
+                    "summary": "MOOR Organisations",
+                    "path": "/organisations"
+                },
+                {
+                    "httpMethod": "GET",
+                    "nickname": "GetRoadworksById",
+                    "notes": "MOOR Roadworks Details By Ids",
+                    "summary": "MOOR Roadworks Details By Ids",
+                    "path": "/details",
+                    "parameters": [
+                        {
+                            "allowMultiple": true,
+                            "dataType": "number",
+                            "description": "List of IDs of Roadworks",
+                            "name": "ids",
+                            "paramType": "query",
+                            "required": false
+                        }
+                    ]
+                },
+                {
+                    "httpMethod": "GET",
+                    "nickname": "GetRoadworkIds",
+                    "notes": "MOOR Roadwork Ids By Parameters",
+                    "summary": "MOOR Roadwork Ids By Parameters",
+                    "path": "/ids",
+                    "parameters": [
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "BottomCoord",
+                            "name": "BottomCoord",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "date",
+                            "description": "EndDateFrom",
+                            "name": "EndDateFrom",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "date",
+                            "description": "EndDateTo",
+                            "name": "EndDateTo",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "date",
+                            "description": "LastModifiedDateFrom",
+                            "name": "LastModifiedDateFrom",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "date",
+                            "description": "LastModifiedDateTo",
+                            "name": "LastModifiedDateTo",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "LeftCoord",
+                            "name": "LeftCoord",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "OrganisationId",
+                            "name": "OrganisationId",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "RightCoord",
+                            "name": "RightCoord",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "date",
+                            "description": "StartDateFrom",
+                            "name": "StartDateFrom",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "date",
+                            "description": "StartDateTo",
+                            "name": "StartDateTo",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "StartDateTo",
+                            "name": "StartDateTo",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "TopCoord",
+                            "name": "TopCoord",
+                            "paramType": "query",
+                            "required": false
+                        },
+                        {
+                            "allowMultiple": false,
+                            "dataType": "number",
+                            "description": "WorkTypeId",
+                            "name": "WorkTypeId",
+                            "paramType": "query",
+                            "required": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ]}

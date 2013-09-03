@@ -199,7 +199,7 @@ body div#ui-container div#resources div.operations h3 div.heading.get h3 span.pa
 
 body div#ui-container div#resources div.operations h3 div.heading.get h3 span.path a {
     color: black;
-    font-size: 0.9em;
+    font-size: 0.8em;
     text-decoration: none;
 }
 
@@ -213,7 +213,7 @@ body div#ui-container div#resources div.operations h3 div.heading.get h3 span.su
     color: white;
     display: inline-block;
     float: right;
-    font-size: 0.7em;
+    font-size: 0.6em;
     text-align: center;
     padding: 4px 5px 4px 5px;
     border-radius: 2px;
@@ -261,7 +261,7 @@ body div#ui-container div#resources div.operations h3 div.heading.post h3 span.p
 
 body div#ui-container div#resources div.operations h3 div.heading.post h3 span.path a {
     color: black;
-    font-size: 0.9em;
+    font-size: 0.8em;
     text-decoration: none;
 }
 
@@ -275,7 +275,7 @@ body div#ui-container div#resources div.operations h3 div.heading.post h3 span.s
     color: white;
     display: inline-block;
     float: right;
-    font-size: 0.7em;
+    font-size: 0.6em;
     text-align: center;
     padding: 4px 5px 4px 5px;
     border-radius: 2px;
@@ -322,7 +322,7 @@ body div#ui-container div#resources div.operations h3 div.heading.put h3 span.pa
 
 body div#ui-container div#resources div.operations h3 div.heading.put h3 span.path a {
     color: black;
-    font-size: 0.9em;
+    font-size: 0.8em;
     text-decoration: none;
 }
 
@@ -336,7 +336,7 @@ body div#ui-container div#resources div.operations h3 div.heading.put h3 span.su
     color: white;
     display: inline-block;
     float: right;
-    font-size: 0.7em;
+    font-size: 0.6em;
     text-align: center;
     padding: 4px 5px 4px 5px;
     border-radius: 2px;
@@ -383,7 +383,7 @@ body div#ui-container div#resources div.operations h3 div.heading.delete h3 span
 
 body div#ui-container div#resources div.operations h3 div.heading.delete h3 span.path a {
     color: black;
-    font-size: 0.9em;
+    font-size: 0.8em;
     text-decoration: none;
 }
 
@@ -397,7 +397,7 @@ body div#ui-container div#resources div.operations h3 div.heading.delete h3 span
     color: white;
     display: inline-block;
     float: right;
-    font-size: 0.7em;
+    font-size: 0.6em;
     text-align: center;
     padding: 4px 5px 4px 5px;
     border-radius: 2px;

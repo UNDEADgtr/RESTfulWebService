@@ -17,6 +17,7 @@ var AppRouter = Backbone.Router.extend({
 
     routes: {
         "": "list",
+        "login" : "login",
         "rest/new": "newTask"
     },
 
@@ -24,6 +25,9 @@ var AppRouter = Backbone.Router.extend({
         //this.before();
     },
     before: function (callback) {
+    },
+    login: function() {
+        //$('#content').html(new App.Views.LoginView().render().el);
     }
 });
 

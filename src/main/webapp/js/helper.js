@@ -16,7 +16,7 @@ tpl = {
         'heading': '<h3><div class="heading {{ httpMethod }}"><h3>' +
             '<span class="http_method"><a href="#">{{ httpMethod }}</a></span>' +
             '<span class="path"><a href="#">{{ path }}</a></span>' +
-            '<span class="summary"><a href="#">{{ summary }}</a></span>' +
+            '<span class="summary"><a href="#">{{summLeng path summary}}</a></span>' +
             '</h3></div></h3>',
         'signatureSelect': '<div class="signature-select">' +
             '<a class="description-link selected" href="#model" onclick="Docs.showModel(\'{{id}}\')">Model</a>' +
@@ -119,6 +119,21 @@ tpl = {
             '{{#if api.company}}Company: {{api.company}}<br/>{{/if}}' +
             '{{#if api.author}}Author: {{api.author}}<br/>{{/if}}' +
             '</p>' +
+            '</div>',
+        'loginButton': '<a id="login-trigger" href="#">Login <span>&#x25BC;</span></a>',
+        'loginArea': '<div id="inputs">' +
+            '<input id="loginEmail" placeholder="Username">' +
+            '<input id="loginPassword" type="password" placeholder="Password">' +
+            '</div>' +
+            '<div id="actions">' +
+            '<button id="loginButton" type="submit">Login</button>' +
+            '</div>',
+        'logoutArea': '<div id="inputs">' +
+            '<p> User: {{userId}} </p>' +
+            '<p> Token: {{token}} </p>' +
+            '</div>' +
+            '<div id="actions">' +
+            '<button id="logoutButton" type="submit">Logout</button>' +
             '</div>'
     },
 
@@ -269,6 +284,15 @@ tpl = {
     getInfoPanel: function (version, api) {
         return Handlebars.compile(this.templatesPattern.infoPanel)({version: version, api: api});
     },
+    getLoginButton: function () {
+        return Handlebars.compile(this.templatesPattern.loginButton)();
+    },
+    getLoginArea: function () {
+        return Handlebars.compile(this.templatesPattern.loginArea)();
+    },
+    getLogoutArea: function (responce) {
+        return Handlebars.compile(this.templatesPattern.logoutArea)(responce);
+    },
     buildResources: function (id) {
         $("#" + id).tabs().addClass('ui-tabs-vertical ui-helper-clearfix');
     },
@@ -293,6 +317,14 @@ tpl = {
             $(this).toggleClass("active");
             return false;
         });
+    },
+    buildLoginArea: function () {
+        $('#login-trigger').click(function () {
+            $(this).next('#login-content').slideToggle();
+            $(this).toggleClass('active');
+            if ($(this).hasClass('active')) $(this).find('span').html('&#x25B2;')
+            else $(this).find('span').html('&#x25BC;')
+        })
     }
 };
 
@@ -317,7 +349,11 @@ var Docs = {
         $('div#' + resource + ' div.raw').show();
     },
     transformResourceName: function (resource) {
-        return resource.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]\^`{|}~]/g, "");
+        if (resource) {
+            return resource.replace(/[!"#$%&'()*+,.\/:;<=>?@\[\\\]\^`{|}~]/g, "");                  //!!!!!!!!!!!!!!!!!!!
+        } else {
+            return resource;
+        }
     },
     showModel: function (id) {
         $('div#' + id + ' a.snippet-link').removeClass('selected')
@@ -383,4 +419,14 @@ Handlebars.registerHelper('ifeq', function (a, b, options) {
     if (a == b) {
         return options.fn(this);
     }
+});
+
+Handlebars.registerHelper('summLeng', function (path, summary) {
+    var newLang = 110 - path.length * 1.33;
+    var result = summary.substring(0, newLang);
+    if (result.length < summary.length) {
+        result = result + '...';
+    }
+    return result;
+
 });

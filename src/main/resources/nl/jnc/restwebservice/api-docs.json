@@ -12,6 +12,18 @@
             "description": ""
         },
         {
+            "path": "/open311",
+            "description": ""
+        },
+        {
+            "path": "/moor",
+            "description": ""
+        },
+        {
+            "path": "/maps",
+            "description": ""
+        },
+        {
             "path": "/word",
             "description": ""
         }
