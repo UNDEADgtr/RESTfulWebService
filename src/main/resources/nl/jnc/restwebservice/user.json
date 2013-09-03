@@ -145,6 +145,20 @@
             "description": "Operations about user",
             "operations": [
                 {
+                    "httpMethod": "GET",
+                    "summary": "Get user1",
+                    "responseClass": "User",
+                    "nickname": "getUser1",
+                    "notes": "Returns a user1",
+                    "path": "/user1"
+                }
+            ]
+        },
+        {
+            "path": "/user",
+            "description": "Operations about user",
+            "operations": [
+                {
                     "httpMethod": "POST",
                     "summary": "Create user",
                     "notes": "This can only be done by the logged in user.",
